@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeCart Store</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #2874f0;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+
+        nav {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: #2874f0;
+            text-decoration: none;
+            padding: 1em;
+            margin: 0 1em;
+        }
+
+        nav a:hover {
+            color: #1c5f99;
+        }
+
+        .container {
+            margin: 2em;
+        }
+
+        .product {
+            border: 1px solid #ddd;
+            padding: 1em;
+            margin: 1em;
+            background-color: white;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .out-of-stock-text {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .low-stock-link,
+        .add-to-cart-link {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #2874f0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor : pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .low-stock-link:hover,
+        .add-to-cart-link:hover {
+            background-color: #1c5f99;
+        }
+
+        .cart-table th,
+        .cart-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .cart-table th {
+            background-color: #2874f0;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            /*background-color: #333;*/
+            /*color: white;*/
+        }
+
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>LuxeCart Store</h1>
+</header>
+<nav>
+    <div>
+        <a href="/user/home">Home</a>
+        <a href="/user/product">Products</a>
+        <a href="/user/cart">Cart</a>
+    </div>
+    <a href="/logout" class="logout" onclick="logout()">Logout</a>
+</nav>
+<div class="container">
+    <!-- Render filter buttons dynamically from the categories received from the controller -->
+    <button class="filter-button" onclick="filterProducts('all')">All Products</button>
+    <th:block th:each="category : ${categories}">
+        <button class="filter-button" th:attr="data-category=${category}"
+                onclick="filterProducts(this.getAttribute('data-category'))" th:text="${category}"></button>
+    </th:block>
+
+    <div class="product" th:each="product : ${products}" th:attr="data-category=${product.category}">
+        <h2 th:text="${product.productName}">Product Name</h2>
+        <p th:text="${product.productDescription}">Description of the product. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit.</p>
+        <p th:text="'Price: $' + ${product.price}">Price: $19.99</p>
+
+        <!-- Check stock quantity and display appropriate link -->
+        <div th:if="${product.stockQuantity == 0}">
+            <span class="out-of-stock-text">Out of Stock</span>
+        </div>
+        <div th:if="${product.stockQuantity > 0 && product.stockQuantity < 10}">
+            <a th:href="@{'/addToCart/' + ${product.productId}}" class="low-stock-link"
+               th:text="'Only '+${product.stockQuantity}+' left - Add to Cart'">
+                Only ${product.stockQuantity} left - Add to Cart
+            </a>
+        </div>
+        <div th:if="${product.stockQuantity >= 10}" th:unless="${product.stockQuantity == 0}">
+            <a th:onclick="addToCart([[${product.productId}]])" class="add-to-cart-link">Add to Cart</a>
+        </div>
+
+    </div>
+    <input type="hidden" id="cartProductIds" th:value="${cartProductIds}"/>
+
+</div>
+
+<script>
+    function addToCart(productId) {
+        if (isProductAlreadyAdded(productId)) {
+            alert('This product is already in your cart.');
+        } else {
+            window.location.href = '/addToCart/' + productId;
+        }
+    }
+
+    function isProductAlreadyAdded(productId) {
+
+        const cartProductIds = document.getElementById('cartProductIds').value.split(',');
+        return cartProductIds.includes(productId);
+    }
+
+    function logout() {
+        alert('Logged out');
+    }
+
+    function filterProducts(category) {
+        const products = document.querySelectorAll('.product');
+
+        products.forEach(product => {
+            const productCategory = product.getAttribute('data-category');
+            if (category === 'all' || category === productCategory) {
+                product.style.display = 'block';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    }
+</script>
+</body>
+</html>

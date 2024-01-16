@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeCart Store - Checkout</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #2874f0;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+
+        nav {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: #2874f0;
+            text-decoration: none;
+            padding: 1em;
+            margin: 0 1em;
+        }
+
+        nav a:hover {
+            color: #1c5f99;
+        }
+
+        .container {
+            margin: 2em;
+        }
+
+        .checkout-container {
+            margin-top: 2em;
+            background-color: white;
+            padding: 1em;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkout-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 1em;
+        }
+
+        .checkout-form label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        .checkout-form input {
+            width: 100%;
+            padding: 0.5em;
+        }
+
+        .checkout-buttons {
+            margin-top: 1em;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .logout {
+            margin-right: 1em;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Use the parent's color (white) */
+        }
+
+        a:hover {
+            text-decoration: none; /* Remove underline on hover */
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>LuxeCart Store</h1>
+</header>
+<nav>
+    <div>
+        <a href="/user/home">Home</a>
+        <a href="/user/product">Products</a>
+        <a href="/user/cart">Cart</a>
+    </div>
+    <a href="/logout" class="logout" onclick="logout()">Logout</a>
+</nav>
+<div class="container">
+    <!-- Checkout Section -->
+    <div class="checkout-container">
+        <h2>Checkout</h2>
+        <div class="checkout-form">
+            <div>
+                <label for="totalAmount">Total Amount:</label>
+                <input th:value="${cartprice}" type="text" id="totalAmount" name="totalAmount" value="$100.00" readonly>
+            </div>
+            <div>
+                <label for="paymentOption">Payment Option:</label>
+                <select id="paymentOption" name="paymentOption">
+                    <option value="creditCard">Credit Card</option>
+                    <option value="debitCard">Debit Card</option>
+                    <option value="paypal">PayPal</option>
+                </select>
+            </div>
+        </div>
+        <div class="checkout-buttons">
+            <button onclick="returnToCart()">Return to Cart</button>
+            <button onclick="placeOrder()">Place Order</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function logout() {
+        // Add your logout logic here
+        alert('Logged out'); // Example: Display an alert for demonstration
+    }
+
+    function returnToCart() {
+        // Redirect to the cart page
+        window.location.href = "/user/cart";
+    }
+
+    function placeOrder() {
+        // Add your place order logic here
+        alert('Order placed successfully'); // Example: Display an alert for demonstration
+        doCheckout()
+    }
+    function doCheckout(){
+        window.location.href="/doCheckout"
+    }
+</script>
+</body>
+</html>

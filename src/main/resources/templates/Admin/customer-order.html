@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management - LuxeCart</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .customer-management {
+            text-align: center;
+        }
+
+        .customer-profile {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .customer-orders table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .customer-orders th, .customer-orders td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .customer-orders th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none; /* Initially hide the spinner */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>Admin Panel - LuxeCart</h1>
+    <nav>
+        <ul>
+            <li><a href="/admin/home">Dashboard</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li><a href="/admin/product">Products</a></li>
+            <li><a href="/admin/order">Orders</a></li>
+            <li><a href="/admin/customer">Customers</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section id="customer-link" class="customer-management">
+        <div id="loading-spinner" class="spinner"></div>
+
+        <h2>Customer Management</h2>
+
+        <!-- Display customer information, replace with dynamic data from your backend -->
+        <div class="customer-profile">
+            <h3 th:text="${user.name}">Customer Name</h3>
+            <p th:text="${user.emailId}">Email: customer@example.com</p>
+            <p th:text="${user.phoneNumber}">Phone: +1234567890</p>
+            <p th:text="${user.address}">Address: 123 Street, City, Country</p>
+        </div>
+
+        <!-- Display customer orders, replace with dynamic data from your backend -->
+        <section class="customer-orders">
+            <h3>Customer Orders</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order:${orderlist}">
+                    <td>
+                        <a th:href="@{'/admin/order/products/' + ${order.orderId}}" th:text="${order.orderId}">1</a>
+                    </td>
+                    <td th:text="${order.orderDate}">Product A</td>
+                    <td th:text="${order.status}">2</td>
+                    <td th:text="${order.totalAmount}">$50.00</td>
+                </tr>
+                <!-- Add more rows for other orders -->
+                </tbody>
+            </table>
+        </section>
+    </section>
+</main>
+
+<!--<footer>-->
+<!--    <p>&copy; 2024 LuxeCart Store. All rights reserved.</p>-->
+<!--</footer>-->
+</body>
+
+<script>
+    // JavaScript code to show the spinner for 2 seconds and then hide it
+    document.onreadystatechange = function () {
+        var spinner = document.getElementById("loading-spinner");
+        var customerSection = document.getElementById("customer-link");
+
+        // Show the spinner while the page is loading
+        spinner.style.display = "block";
+
+        // Hide the spinner after 2 seconds
+        setTimeout(function () {
+            spinner.style.display = "none";
+            customerSection.style.display = "block"; // Show the customer section
+        }, 500); // 2000 milliseconds (2 seconds)
+    };
+</script>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password</title>
+  <link rel="stylesheet" href="forgot.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .forgot-password-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .forgot-password-container h2 {
+      color: #333;
+    }
+
+    .forgot-password-form {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+
+    .forgot-password-form label {
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .forgot-password-form input {
+      padding: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .forgot-password-form button {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .forgot-password-form button:hover {
+      background-color: #45a049;
+    }
+
+    .login-link {
+      margin-top: 20px;
+    }
+
+    .login-link p {
+      color: #555;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      text-decoration: none;
+      color: #4caf50;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="forgot-password-container">
+  <h2>Forgot Password</h2>
+  <form class="forgot-password-form" th:object="${ForgotUser}" th:action="@{/forgot}" method="post">
+<!--    <label for="email">Email:</label>-->
+    <div th:if="${error != null}">
+      <p style="text-align: center;color: #dc3545" class="text-danger">[[${error}]]</p>
+    </div>
+    <div th:if="${message != null}">
+      <p style="text-align: center; color: #ffc107" class="text-warning">[[${message}]]</p>
+      <p style="text-align: center;">Click <a href="/login">here</a> to login.</p>
+    </div>
+    <input th:field="*{emailUserPhone}" type="text" id="email" name="email" placeholder="Email" required>
+
+    <button type="submit">Reset Password</button>
+  </form>
+
+  <div class="login-link">
+    <p>Remember your password? <a href="login">Login</a></p>
+  </div>
+</div>
+
+</body>
+</html>

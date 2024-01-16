@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management - LuxeCart</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .product-list table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .product-list th,
+        .product-list td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .product-list th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .edit-btn,
+        .delete-btn,
+        .add-product-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .edit-btn:hover,
+        .delete-btn:hover,
+        .add-product-btn:hover {
+            background-color: #45a049;
+        }
+
+        .add-product-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 5px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Modal Form Styles */
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content label {
+            margin-bottom: 8px;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .modal-content button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        /* Add this CSS code to your existing styles or create a new CSS file */
+
+        /* Style for the dropdown */
+        label[for="category"],
+        select {
+            display: block;
+            margin-top: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>Admin Panel - LuxeCart</h1>
+    <nav>
+        <ul>
+            <li><a href="/admin/home">Dashboard</a></li>
+            <li><a href="/admin/category">Category</a></li>
+            <li><a href="/admin/product">Products</a></li>
+            <li><a href="/admin/order">Orders</a></li>
+            <li><a href="/admin/customer">Customers</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <button class="add-product-btn" onclick="openAddProductModal()">Add Product</button>
+    <h2>Product Management</h2>
+
+    <div class="product-list">
+        <table>
+            <thead>
+            <tr>
+                <th>Serial Number</th>
+                <th>Product Name</th>
+                <th>Product Image</th>
+                <th>Product Description</th>
+                <th>Price</th>
+                <th>Stock Quantity</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Replace the following with Thymeleaf loop to iterate over products -->
+            <tr th:each="product, no: ${productList}">
+                <td th:width="1px" th:text="${no.index + 1}"></td>
+                <td th:text="${product.productName}">Product 1</td>
+                <td th:text="${product.productImg}">Product Image</td>
+                <td th:text="${product.productDescription}">Description for Product 1</td>
+                <td th:text="${product.price}">$100.00</td>
+                <td th:text="${product.stockQuantity}">10</td>
+                <td>
+                    <a role="button" class="edit-btn"
+                       th:onclick="editProduct([[${product.productId}]], [[${product.productName}]], [[${product.productDescription}]], [[${product.price}]], [[${product.stockQuantity}]])">Edit</a>
+                    <a role="button" class="delete-btn"
+                       th:onclick="confirmDelete([[${product.productId}]])">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add Product</h2>
+            <form id="productForm" th:object="${product}" th:action="@{/admin/add-product}" method="post"
+                  enctype="multipart/form-data">
+                <input th:field="*{productId}" type="hidden" id="productId" name="productId" readonly>
+
+                <label for="productName">Product Name:</label>
+                <input th:field="*{productName}" type="text" id="productName" name="productName" required>
+
+                <label for="image">Product Image:</label>
+                <input type="file" name="image" accept="image/*" class="form-control-file">
+
+                <label for="category">Select Category:</label>
+                <select th:field="*{category}" id="category" name="category">
+                    <option th:each="category : ${categoryList}" th:value="${category.categoryId}"
+                            th:text="${category.categoryName}"></option>
+                </select>
+
+                <label for="productDescription">Product Description:</label>
+                <textarea th:field="*{productDescription}" id="productDescription" name="productDescription"
+                          rows="4"></textarea>
+
+                <label for="price">Price:</label>
+                <input th:field="*{price}" type="text" id="price" name="price" required>
+
+                <label for="stockQuantity">Stock Quantity:</label>
+                <input th:field="*{stockQuantity}" type="text" id="stockQuantity" name="stockQuantity" required>
+
+                <button type="submit" id="submitBtn">Add Product</button>
+            </form>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2024 LuxeCart Store. All rights reserved.</p>
+</footer>
+<script>
+    function editProduct(productId, productName, productDescription, price, stockQuantity) {
+        document.getElementById("productForm").reset();
+        document.getElementById("modalTitle").innerHTML = "Edit Product";
+        document.getElementById("submitBtn").innerHTML = "Update Product";
+
+        // Populate form fields with product details
+        document.getElementById("productId").value = productId;
+        document.getElementById("productName").value = productName;
+        document.getElementById("productDescription").value = productDescription;
+        document.getElementById("price").value = price;
+        document.getElementById("stockQuantity").value = stockQuantity;
+
+        // Set th:object attribute dynamically
+        document.getElementById("productForm").setAttribute("th:object", "${product}");
+
+        document.getElementById("productModal").style.display = "block";
+    }
+
+    function openAddProductModal() {
+        document.getElementById("productForm").reset();
+        document.getElementById("modalTitle").innerHTML = "Add Product";
+        document.getElementById("submitBtn").innerHTML = "Add Product";
+        document.getElementById("productModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("productModal").style.display = "none";
+    }
+
+    function confirmDelete(productId) {
+        console.log(productId)
+        const confirmation = confirm("Are you sure want to delete this Product");
+        if (confirmation) {
+            window.location.href = "/admin/product/delete?productId=" + productId;
+            // alert("Successfully Deleted")
+        }
+    }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Page</title>
+  <link rel="stylesheet" href="register.css">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .register-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      width: 500px;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .register-container h2 {
+      color: #3498db;
+    }
+
+    .register-form {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+
+    .register-form label {
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .register-form input,
+    .register-form textarea {
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #95a5a6;
+      border-radius: 6px;
+      box-sizing: border-box;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    .register-form button {
+      background-color: #2ecc71;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .register-form button:hover {
+      background-color: #27ae60;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-weight: bold;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .register-form input.error,
+    .register-form textarea.error {
+      border-color: #e74c3c;
+    }
+
+    .login-link {
+      margin-top: 20px;
+    }
+
+    .login-link p {
+      color: #555;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      text-decoration: none;
+      color: #3498db;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="register-container">
+  <h2>Sign Up</h2>
+  <form th:object="${NewUser}" th:action="@{/register}" class="register-form" method="post">
+
+      <div th:if="${success != null}">
+          <p style="text-align: center; color: #ffc107" class="text-warning">[[${success}]]</p>
+          <p style="text-align: center;">Click <a href="/login">here</a> to login.</p>
+      </div>
+
+<!--    <label for="name">Name:</label>-->
+    <input th:field="*{name}" type="text" id="name" name="name" placeholder="Name" required>
+
+<!--    <label for="username">Username:</label>-->
+    <div th:if="${duplicateUserName}" class="error-message">
+      <p th:text="${duplicateUserName}"></p>
+    </div>
+    <input th:field="*{username}" type="text" id="username" name="username" placeholder="Username" required th:class="${duplicateUserName} ? 'error' : ''">
+
+<!--    <label for="email">Email:</label>-->
+    <div th:if="${duplicateEmailId}" class="error-message">
+      <p th:text="${duplicateEmailId}"></p>
+    </div>
+    <input th:field="*{emailId}" type="email" id="email" name="email" placeholder="Email" required th:class="${duplicateEmailId} ? 'error' : ''">
+
+<!--    <label for="phone">Phone Number:</label>-->
+    <div th:if="${duplicatePhoneNumber}" class="error-message">
+      <p th:text="${duplicatePhoneNumber}"></p>
+    </div>
+    <input th:field="*{phoneNumber}" type="text" id="phone" name="phone" placeholder="Phone Number" required th:class="${duplicatePhoneNumber} ? 'error' : ''">
+
+<!--    <label for="password">Password:</label>-->
+    <input th:field="*{password}" type="password" id="password" name="password" placeholder="Password" required>
+
+<!--    <label for="address">Address:</label>-->
+    <textarea th:field="*{address}" id="address" name="address" rows="4" placeholder="Full Address" required></textarea>
+
+<!--    <label for="pincode">Pin Code:</label>-->
+    <input th:field="*{pincode}" type="text" id="pincode" name="pincode" placeholder="Pin Code" required >
+      <input type="file" th:field="*{profileImg}" name="profileImage" accept="image/*">
+
+    <button type="submit">Create Account</button>
+  </form>
+
+  <div class="login-link">
+    <p>Already have an account? <a href="login">Log In</a></p>
+  </div>
+</div>
+
+</body>
+</html>
