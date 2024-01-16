@@ -13,33 +13,6 @@
             padding: 0;
         }
 
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-        }
-
-        nav ul li {
-            margin-right: 20px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #fff;
-        }
-
         main {
             padding: 20px;
         }
@@ -196,19 +169,8 @@
 </head>
 
 <body>
-<header>
-    <h1>Admin Panel - LuxeCart</h1>
-    <nav>
-        <ul>
-            <li><a href="/admin/home">Dashboard</a></li>
-            <li><a href="/admin/category">Category</a></li>
-            <li><a href="/admin/product">Products</a></li>
-            <li><a href="/admin/order">Orders</a></li>
-            <li><a href="/admin/customer">Customers</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
-</header>
+
+<div th:replace="~{Admin/fragments}"></div>
 
 <main>
     <button class="add-category-btn" onclick="openAddCategoryModal()">Add Category</button>
@@ -268,9 +230,6 @@
 
 </main>
 
-<footer>
-    <p>&copy; 2024 LuxeCart Store. All rights reserved.</p>
-</footer>
 <script>
     // Open the modal for adding a new category
     function openAddCategoryModal() {
