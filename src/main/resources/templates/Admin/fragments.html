@@ -1,46 +1,68 @@
-
 <head>
     <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px 0;
             text-align: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 36px;
         }
 
         nav {
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
-            margin-top: 10px;
         }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-        }
-
-        nav ul li {
+        li {
             margin-right: 20px;
         }
 
-        nav a {
+        a {
             text-decoration: none;
-            color: #fff;
+            color: #ecf0f1;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            text-decoration: none;
+            color: #3498db;
         }
     </style>
 </head>
 <body>
 <header>
     <h1>Admin Panel - LuxeCart</h1>
-    <nav>
-        <ul>
-            <li><a href="/admin/home">Dashboard</a></li>
-            <li><a href="/admin/category">Category</a></li>
-            <li><a href="/admin/product">Products</a></li>
-            <li><a href="/admin/order">Orders</a></li>
-            <li><a href="/admin/customer">Customers</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
 </header>
+<nav>
+    <ul>
+        <li><a href="/admin/home" title="Dashboard">📊 Dashboard</a></li>
+        <li><a href="/admin/category" title="Category">📁 Category</a></li>
+        <li><a href="/admin/product" title="Products">🛍️ Products</a></li>
+        <li><a href="/admin/order" title="Orders">📦 Orders</a></li>
+        <li><a href="/admin/customer" title="Customers">👥 Customers</a></li>
+        <li><a href="/logout" title="Logout">🚪 Logout</a></li>
+    </ul>
+</nav>
 </body>

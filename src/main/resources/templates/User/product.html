@@ -1,111 +1,172 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuxeCart Store</title>
     <style>
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 1em;
+            text-align: center;
         }
 
         .container {
-            margin: 2em;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px;
         }
 
-        .product {
-            border: 1px solid #ddd;
-            padding: 1em;
-            margin: 1em;
+        .product-card {
+            border: 1px solid #dee2e6;
             background-color: white;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .out-of-stock-text {
-            color: #ff0000;
+        .product-card:hover {
+            transform: scale(1.03);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-details {
+            padding: 1em;
+        }
+
+        .product-details h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .product-details p {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 1em;
+        }
+
+        .product-details img{
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .original-price {
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        .discounted-price {
+            color: #e44d26;
+            font-size: 1.5em;
             font-weight: bold;
         }
 
-        .low-stock-link,
+        .stock-status {
+            margin-top: 10px;
+            color: #888;
+            font-size: 1em;
+        }
+
         .add-to-cart-link {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #2874f0;
+            display: block;
+            padding: 10px;
+            background-color: #007bff;
             color: white;
             text-decoration: none;
             border-radius: 5px;
-            cursor : pointer;
             transition: background-color 0.3s ease-in-out;
+            text-align: center;
+            cursor: pointer;
         }
 
-        .low-stock-link:hover,
         .add-to-cart-link:hover {
-            background-color: #1c5f99;
-        }
-
-        .cart-table th,
-        .cart-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .cart-table th {
-            background-color: #2874f0;
-            color: white;
+            background-color: #0056b3;
         }
 
         footer {
             text-align: center;
             padding: 1em;
-            position: fixed;
-            bottom: 0;
+            background-color: #343a40;
+            color: white;
+            margin-top: auto;
             width: 100%;
-            /*background-color: #333;*/
-            /*color: white;*/
         }
-
-
     </style>
 </head>
+
 <body>
+
+
 <div th:replace="~{User/fragments}"></div>
 
 <div class="container">
-    <!-- Render filter buttons dynamically from the categories received from the controller -->
+    <!-- Filter buttons -->
     <button class="filter-button" onclick="filterProducts('all')">All Products</button>
     <th:block th:each="category : ${categories}">
         <button class="filter-button" th:attr="data-category=${category}"
                 onclick="filterProducts(this.getAttribute('data-category'))" th:text="${category}"></button>
     </th:block>
 
-    <div class="product" th:each="product : ${products}" th:attr="data-category=${product.category}">
-        <h2 th:text="${product.productName}">Product Name</h2>
-        <p th:text="${product.productDescription}">Description of the product. Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit.</p>
-        <p th:text="'Price: $' + ${product.price}">Price: $19.99</p>
+    <!-- Product cards -->
+    <!-- Assuming your product data has a discount property -->
+    <div class="product-card" th:each="product : ${products}" th:attr="data-category=${product.category}"
+         onclick="addToCart([[${product.productId}]])">
+            <img th:src="@{/product/image/{productId}(productId=${product.productId})}" alt="pic">
+        <div class="product-details">
+            <h2 th:text="${product.productName}">Product Name</h2>
+            <p th:text="${product.productDescription}">Description of the product. Lorem ipsum dolor sit amet,
+                consectetur adipiscing elit.</p>
 
-        <!-- Check stock quantity and display appropriate link -->
-        <div th:if="${product.stockQuantity == 0}">
-            <span class="out-of-stock-text">Out of Stock</span>
-        </div>
-        <div th:if="${product.stockQuantity > 0 && product.stockQuantity < 10}">
-            <a th:href="@{'/addToCart/' + ${product.productId}}" class="low-stock-link"
-               th:text="'Only '+${product.stockQuantity}+' left - Add to Cart'">
-                Only ${product.stockQuantity} left - Add to Cart
-            </a>
-        </div>
-        <div th:if="${product.stockQuantity >= 10}" th:unless="${product.stockQuantity == 0}">
-            <a th:onclick="addToCart([[${product.productId}]])" class="add-to-cart-link">Add to Cart</a>
-        </div>
+            <!-- Display price information -->
+            <div class="price-container">
+                    <span class="original-price" th:if="${product.discount}">
+                        <del th:text="${product.price}">₹${product.price}</del>
+                    </span>
+                <span class="original-price" th:unless="${product.discount}" th:text="${product.price}">₹${product.price}</span>
+                <p class="discounted-price" th:if="${product.discount}"
+                   th:text="'Discounted Price : ₹'+${product.price - (product.price * product.discount / 100)}">
+                    Discounted Price: ₹${product.price - (product.price * product.discount / 100)}</p>
+            </div>
 
+            <!-- Stock status -->
+            <p class="stock-status" th:if="${product.stockQuantity == 0}">Out of Stock</p>
+            <p class="stock-status" th:if="${product.stockQuantity > 0 && product.stockQuantity < 10}" th:text="'Only '+${product.stockQuantity}    +' left in stock'">
+                Only ${product.stockQuantity} left in stock
+            </p>
+
+            <!-- Add to Cart button -->
+            <a th:href="@{'/addToCart/' + ${product.productId}}" class="add-to-cart-link">Add to Cart</a>
+        </div>
     </div>
-    <input type="hidden" id="cartProductIds" th:value="${cartProductIds}"/>
-
 </div>
+
+<!-- Hidden cart product IDs -->
+<input type="hidden" id="cartProductIds" th:value="${cartProductIds}"/>
 
 <script>
     function addToCart(productId) {
@@ -117,7 +178,6 @@
     }
 
     function isProductAlreadyAdded(productId) {
-
         const cartProductIds = document.getElementById('cartProductIds').value.split(',');
         return cartProductIds.includes(productId);
     }
@@ -127,7 +187,7 @@
     }
 
     function filterProducts(category) {
-        const products = document.querySelectorAll('.product');
+        const products = document.querySelectorAll('.product-card');
 
         products.forEach(product => {
             const productCategory = product.getAttribute('data-category');
@@ -140,4 +200,5 @@
     }
 </script>
 </body>
+
 </html>

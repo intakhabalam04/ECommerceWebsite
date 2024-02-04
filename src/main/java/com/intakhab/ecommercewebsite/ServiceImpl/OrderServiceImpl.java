@@ -1,73 +1,94 @@
 package com.intakhab.ecommercewebsite.ServiceImpl;
 
+import com.intakhab.ecommercewebsite.Enum.OrderStatus;
 import com.intakhab.ecommercewebsite.Model.Cart;
 import com.intakhab.ecommercewebsite.Model.Order;
 import com.intakhab.ecommercewebsite.Model.Product;
 import com.intakhab.ecommercewebsite.Model.User;
-import com.intakhab.ecommercewebsite.Repository.CartRepo;
 import com.intakhab.ecommercewebsite.Repository.OrderRepo;
+import com.intakhab.ecommercewebsite.Repository.ProductRepo;
 import com.intakhab.ecommercewebsite.Repository.UserRepo;
+import com.intakhab.ecommercewebsite.Service.DateAndTimeService;
 import com.intakhab.ecommercewebsite.Service.OrderService;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepo orderRepo;
     private final UserRepo userRepo;
-    private final CartRepo cartRepo;
+    private final ProductRepo productRepo;
+    private final DateAndTimeService dateAndTimeService;
 
-    public OrderServiceImpl(OrderRepo orderRepo, UserRepo userRepo, CartRepo cartRepo) {
+    // Constructor to inject dependencies
+    public OrderServiceImpl(OrderRepo orderRepo, UserRepo userRepo, ProductRepo productRepo, DateAndTimeService dateAndTimeService) {
         this.orderRepo = orderRepo;
         this.userRepo = userRepo;
-        this.cartRepo = cartRepo;
+        this.productRepo = productRepo;
+        this.dateAndTimeService = dateAndTimeService;
     }
 
+    // Process an order
     @Override
     public void checkOrder(User user) {
-
-
-            double total = 0;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a");
 
-        Order order = new Order();
-        order.setUser(user);
+        Order order = createOrder(user);
+        Cart lastCart = getLastCart(user);
 
-        // Use the last added cart
+        if (lastCart != null && !lastCart.getProductList().isEmpty()) {
+            processOrderItems(order, lastCart);
+        } else {
+            return; // Skip processing if the last cart is empty
+        }
+
+        setOrderDetailsAndSave(order, formatter);
+        createNewCartForUser(user);
+    }
+
+    private Order createOrder(User user) {
+        Order order = new Order();
+        order.setOrderId(generateOrderId());
+        order.setUser(user);
+        return order;
+    }
+
+    private Cart getLastCart(User user) {
         List<Cart> userCarts = user.getCart();
         if (!userCarts.isEmpty()) {
             userCarts.sort(Comparator.comparing(Cart::getCreatedDate));
-            Cart lastCart = userCarts.get(userCarts.size() - 1);
-            order.setCart(lastCart);
-            for (Product product : lastCart.getProductList()) {
-                total += product.getPrice();
-                System.out.println("price"+product.getPrice());
-            }
-
+            return userCarts.get(userCarts.size() - 1);
         }
+        return null;
+    }
 
-
-
-        order.setOrderDate(LocalDateTime.now().format(formatter));
+    private void processOrderItems(Order order, Cart cart) {
+        double total = 0;
+        for (Product product : cart.getProductList()) {
+            if (product.getStockQuantity() == 0) {
+                return; // Skip processing if stock is insufficient
+            }
+            product.setStockQuantity(product.getStockQuantity() - 1);
+            productRepo.save(product);
+            total += product.getPrice() - (product.getPrice() * product.getDiscount()) / 100;
+        }
+        order.setCart(cart);
         order.setTotalAmount(total);
-        order.setStatus("DONE");
+    }
 
-
-        System.out.println(order.getCart().getCartId());
-        System.out.println(order.getOrderId());
-
+    private void setOrderDetailsAndSave(Order order, DateTimeFormatter formatter) {
+        order.setOrderDate(LocalDateTime.now().format(formatter));
+        order.setStatus(OrderStatus.PROCESSING);
         orderRepo.save(order);
+    }
 
-        // Create a new cart for the user
+    private void createNewCartForUser(User user) {
         List<Cart> cartList = user.getCart();
         Cart newCart = new Cart();
         cartList.add(newCart);
@@ -77,27 +98,131 @@ public class OrderServiceImpl implements OrderService {
         userRepo.save(user);
     }
 
+
+    // Retrieve all orders sorted by orderId in descending order
     @Override
     public List<Order> findAllOrders() {
-        return orderRepo.findAll(Sort.by("orderDate").descending());
+        return orderRepo.findAll(Sort.by("orderId").descending());
     }
 
+    // Retrieve all orders for a specific user
     @Override
     public List<Order> findAllOrders(UUID id) {
-        System.out.println("1");
-        List<Order> orderListById=new ArrayList<>();
-        System.out.println("3");
-        for(Order order:findAllOrders()){
-            if (order.getUser().getId().equals(id)){
-                orderListById.add(order);
-            }
-        }
-        System.out.println("2");
-        return orderListById;
+        return findAllOrders()
+                .stream()
+                .filter(order -> order.getUser().getId().equals(id))
+                .collect(Collectors.toList());
     }
 
+    // Retrieve an order by orderId
     @Override
-    public Order getOrderById(UUID orderId) {
-        return orderRepo.findById(orderId).get();
+    public Order getOrderById(Long orderId) {
+        return orderRepo.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order not found"));
     }
+
+    // Generate a new orderId
+    @Override
+    public Long generateOrderId() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String currentDate = LocalDateTime.now().format(formatter);
+        long orderDate = Long.parseLong(currentDate) * 10000;
+
+        List<Order> allOrders = orderRepo.findAll(Sort.by("orderId").descending());
+
+        return allOrders.isEmpty() ? orderDate + 1 : getNextOrderId(allOrders.get(0), orderDate);
+    }
+
+    // Helper method to get the next orderId based on the last order
+    private Long getNextOrderId(Order lastOrder, long orderDate) {
+        return (lastOrder.getOrderId() / 10000) * 10000 == orderDate
+                ? lastOrder.getOrderId() + 1
+                : orderDate + 1;
+    }
+
+    // Cancel an order and update stock quantities
+    @Override
+    public void cancelOrder(Long orderId) {
+        orderRepo.findById(orderId).ifPresent(order -> {
+            order.getCart().getProductList().forEach(product -> {
+                product.setStockQuantity(product.getStockQuantity() + 1);
+                productRepo.save(product);
+            });
+
+            order.setStatus(OrderStatus.CANCELLED);
+            orderRepo.save(order);
+        });
+    }
+
+
+    // Retrieve all orders
+    @Override
+    public List<Order> getTotalOrders() {
+        return orderRepo.findAll();
+    }
+
+    // Retrieve all cancelled orders
+    @Override
+    public List<Order> getTotalCancelledOrders() {
+        return getTotalOrders().stream()
+                .filter(order -> order.getStatus().equals(OrderStatus.CANCELLED))
+                .collect(Collectors.toList());
+    }
+
+    // Retrieve all processing orders
+    @Override
+    public List<Order> getTotalProcessingOrders() {
+        return getTotalOrders().stream()
+                .filter(order -> order.getStatus().equals(OrderStatus.PROCESSING))
+                .collect(Collectors.toList());
+    }
+
+    // Retrieve all delivered orders
+    @Override
+    public List<Order> getTotalDeliveredOrders() {
+        return getTotalOrders().stream()
+                .filter(order -> order.getStatus().equals(OrderStatus.DELIVERED))
+                .collect(Collectors.toList());
+    }
+
+    // Retrieve all returned orders
+    @Override
+    public List<Order> getTotalReturnedOrders() {
+        return getTotalOrders().stream()
+                .filter(order -> order.getStatus().equals(OrderStatus.RETURNED))
+                .collect(Collectors.toList());
+    }
+
+    // Generate reports on the number of orders per date
+    @Override
+    public Map<String, Long> generateReports() {
+        return getTotalOrders()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        order -> dateAndTimeService.extractDateFromOrderDate(order.getOrderDate()),
+                        Collectors.counting()
+                ));
+    }
+
+    // Update the status of an order
+    @Override
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        Order order = getOrderById(orderId);
+        order.setStatus(status);
+        orderRepo.save(order);
+    }
+
+    // Process a return order and update stock quantities
+    @Override
+    public void returnOrder(Long orderId) {
+        orderRepo.findById(orderId).ifPresent(order -> {
+            order.getCart().getProductList().forEach(product -> {
+                product.setStockQuantity(product.getStockQuantity() + 1);
+                productRepo.save(product);
+            });
+
+            order.setStatus(OrderStatus.RETURNED);
+            orderRepo.save(order);
+        });
+    }
+
 }

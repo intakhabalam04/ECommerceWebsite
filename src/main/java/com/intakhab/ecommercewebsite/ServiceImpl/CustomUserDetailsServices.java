@@ -26,7 +26,7 @@ public class CustomUserDetailsServices implements UserDetailsService {
     public UserDetails loadUserByUsername(String emailUserPhone) throws UsernameNotFoundException {
         User user = userRepository.findByUsernameOrEmailIdOrPhoneNumber(emailUserPhone, emailUserPhone, emailUserPhone);
         if (user == null) {
-            throw new UsernameNotFoundException("Username or password not found");
+            throw new UsernameNotFoundException("User not found with username, email, or phone number: " + emailUserPhone);
         }
 
         Collection<? extends GrantedAuthority> authorities = authorities(user);

@@ -1,5 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
         header {
             background-color: #2874f0;
             color: white;
@@ -13,6 +24,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 1em;
         }
 
         nav a {
@@ -20,18 +32,42 @@
             text-decoration: none;
             padding: 1em;
             margin: 0 1em;
+            transition: color 0.3s ease-in-out;
         }
 
         nav a:hover {
             color: #1c5f99;
         }
+
         .logout {
             margin-right: 1em;
             cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .logout:hover {
+            background-color: #0056b3;
+        }
+
+        .login {
+            background-color: #007bff;
+            color: #fff;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .login:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
-
 
 <body>
 <header>
@@ -39,11 +75,17 @@
 </header>
 <nav>
     <div>
-        <a href="/user/home">Home</a>
-        <a href="/user/product">Products</a>
-        <a href="/user/cart">Cart</a>
-        <!--    <a href="#">Contact</a>-->
+        <a href="/user/home" title="Home">🏠 Home</a>
+        <a href="/user/product" title="Products">🛍️ Products</a>
+        <a href="/user/cart" title="Cart">🛒 Cart</a>
+        <a href="/user/history" title="Order History">📜 Order History</a>
     </div>
-    <a href="/logout" class="logout" onclick="logout()">Logout</a>
+    <div th:if="${user}">
+        <a href="/logout" class="logout" onclick="logout()">Logout</a>
+    </div>
+    <div th:unless="${user}">
+        <a href="/login" class="login">Login</a>
+    </div>
 </nav>
 </body>
+</html>

@@ -19,8 +19,9 @@
         .checkout-container {
             margin-top: 2em;
             background-color: white;
-            padding: 1em;
+            padding: 2em;
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
         .checkout-form {
@@ -34,9 +35,14 @@
             margin-bottom: 0.5em;
         }
 
-        .checkout-form input {
+        .checkout-form input,
+        .checkout-form select {
             width: 100%;
             padding: 0.5em;
+            margin-top: 0.3em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
 
         .checkout-buttons {
@@ -54,13 +60,14 @@
         }
 
         a {
-            text-decoration: none; /* Remove underline */
-            color: inherit; /* Use the parent's color (white) */
+            text-decoration: none;
+            color: inherit;
         }
 
         a:hover {
-            text-decoration: none; /* Remove underline on hover */
+            text-decoration: none;
         }
+
     </style>
 </head>
 <body>
@@ -73,15 +80,22 @@
         <div class="checkout-form">
             <div>
                 <label for="totalAmount">Total Amount:</label>
-                <input th:value="${cartprice}" type="text" id="totalAmount" name="totalAmount" value="$100.00" readonly>
+                <!-- Display Total Amount -->
+                <input th:value="${cartprice}" type="text" id="totalAmount" name="totalAmount" readonly>
             </div>
             <div>
-                <label for="paymentOption">Payment Option:</label>
-                <select id="paymentOption" name="paymentOption">
-                    <option value="creditCard">Credit Card</option>
-                    <option value="debitCard">Debit Card</option>
-                    <option value="paypal">PayPal</option>
-                </select>
+                <label for="orderId">Order ID:</label>
+                <input th:value="${orderId}" type="text" id="orderId" name="orderId" readonly>
+            </div>
+            <div>
+                <label for="orderDateTime">Order Date and Time:</label>
+                <input th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}" type="text" id="orderDateTime" name="orderDateTime" readonly>
+            </div>
+            <div>
+                <label for="couponCode">Coupon Code:</label>
+                <input type="text" id="couponCode" name="couponCode">
+                <button th:onclick="applyCoupon()">Apply Coupon</button>
+                <div id="couponMessage"></div> <!-- New element for the message -->
             </div>
         </div>
         <div class="checkout-buttons">
@@ -92,24 +106,45 @@
 </div>
 
 <script>
-    function logout() {
-        // Add your logout logic here
-        alert('Logged out'); // Example: Display an alert for demonstration
-    }
-
     function returnToCart() {
-        // Redirect to the cart page
         window.location.href = "/user/cart";
     }
 
-    function placeOrder() {
-        // Add your place order logic here
-        alert('Order placed successfully'); // Example: Display an alert for demonstration
-        doCheckout()
+    function doCheckout() {
+        window.location.href = "/doCheckout";
     }
-    function doCheckout(){
-        window.location.href="/doCheckout"
+
+    function placeOrder() {
+        alert('Order placed successfully');
+        doCheckout();
+    }
+    async function applyCoupon() {
+        var couponCode = document.getElementById("couponCode").value;
+
+        try {
+            const response = await fetch(`/validateCoupon?couponCode=${couponCode}`);
+            if (response.ok) {
+                const isValidCoupon = await response.json();
+
+                if (isValidCoupon) {
+
+                    alert("Coupon applied successfully!");
+                    document.getElementById("couponMessage").innerHTML="Coupon applied successfully!";
+                    document.getElementById("totalAmount").value=document.getElementById("totalAmount").value*0.9
+                    console.log(document.getElementById("totalAmount").value)
+                    // Additional logic if needed
+                } else {
+                    alert("Invalid coupon code. Please try again.");
+                    document.getElementById("couponMessage").innerHTML="Invalid coupon code. Please try again."
+                }
+            } else {
+                console.error("Failed to validate coupon");
+            }
+        } catch (error) {
+            console.error("Error during coupon validation", error);
+        }
     }
 </script>
+
 </body>
 </html>

@@ -3,6 +3,7 @@ package com.intakhab.ecommercewebsite.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,9 +33,11 @@ public class User {
     private int pincode;
     private String emailUserPhone;
     @Lob
+    @Column(length = 1048576)
     private byte[] profileImg;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Cart> cart;
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
     private List<Order> orderList;
+    private LocalDate registerDate;
 }

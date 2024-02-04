@@ -37,13 +37,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain mySecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/forgot", "/reset_password").permitAll()
-                .requestMatchers("/register", "/home").permitAll()
-                .requestMatchers("/user/product").permitAll()
-                .requestMatchers("/user/**").hasRole("USER")
+                .requestMatchers("/forgot", "/reset_password", "/register", "/home", "/static/**").permitAll()
+                .requestMatchers("/change-password", "/user/**").hasRole("USER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
@@ -65,17 +63,15 @@ public class SecurityConfig {
         return http.build();
     }
 
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailsServices).passwordEncoder(passwordEncoder());
     }
 
-
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         return userService.findByUserName(currentUsername);
     }
-
-
 }

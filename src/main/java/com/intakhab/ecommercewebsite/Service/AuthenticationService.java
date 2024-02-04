@@ -9,4 +9,8 @@ public interface AuthenticationService {
     boolean validateUserToken(String token);
     User findByToken(String token);
     void updatePassword(User user, String password);
+    boolean updatePassword(String currentPassword, String newPassword);
+    boolean checkAvailabilityByUsername(String username);
+    boolean checkAvailabilityByEmailId(String emailId);
+    boolean checkAvailabilityByPhoneNumber(String phoneNumber);
 }

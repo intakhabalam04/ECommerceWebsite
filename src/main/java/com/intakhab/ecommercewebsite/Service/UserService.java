@@ -16,4 +16,10 @@ public interface UserService {
     List<User> getAllUsers();
 
     User findById(UUID id);
+
+    List<User> findAllUsers();
+
+    List<User> findLast5User();
+
+    byte[] getUserImageById(UUID userId);
 }

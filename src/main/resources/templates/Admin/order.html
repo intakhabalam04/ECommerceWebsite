@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Management - LuxeCart</title>
-    <link rel="stylesheet" href="admin-styles.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f8f9fa;
+            color: #343a40;
         }
 
         main {
@@ -22,62 +23,119 @@
         }
 
         .order-item {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            padding: 15px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
             margin-bottom: 20px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
 
-        .customer-orders table {
+        .order-item:hover {
+            /*background-color: #5e99f1;*/
+            color: #007bff;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        .customer-orders {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
 
-        .customer-orders th, .customer-orders td {
-            border: 1px solid #ccc;
-            padding: 10px;
+        .customer-orders th,
+        .customer-orders td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
             text-align: left;
         }
 
         .customer-orders th {
-            background-color: #333;
+            background-color: #3498db;
             color: #fff;
         }
 
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+        .customer-orders tr:nth-child(even) {
+            background-color: #f8f9fa;
         }
+
+        .customer-orders tr:hover {
+            background-color: #cce5ff;
+        }
+
+        /* Responsive styling for smaller screens */
+        @media (max-width: 768px) {
+            .customer-orders th,
+            .customer-orders td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
     </style>
 </head>
 
 <body>
 <div th:replace="~{Admin/fragments}"></div>
 
-
 <main>
+    <button th:onclick="window.print()">Print All Orders</button>
     <section id="order-link" class="order-management">
-        <h2>Order Management</h2>
+        <h2 style="color: #333;">Order Management</h2>
 
         <!-- Display list of orders, replace with dynamic data from your backend -->
-        <div th:each="order:${allorders}" class="order-item">
-            <h3 th:text="${order.orderId}" >Order ID: 123</h3>
-            <p th:text="${order.user.name}"> Customer: Customer Name 1</p>
-            <p th:text="${order.totalAmount}">Total: $100.00</p>
-            <p th:text="${order.status}">Status: Processing</p>
-            <p th:text="${order.orderDate}">Status: Processing</p>
+        <table class="customer-orders">
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Order Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order: ${allorders}" class="order-item">
+                <td th:text="${order.orderId}">123</td>
+                <td th:text="${order.user.name}">Customer Name 1</td>
+                <td th:text="${order.totalAmount}">$100.00</td>
+                <td>
+                    <input type="hidden" name="orderId" th:value="${order.orderId}" />
+                    <select name="status" th:onchange="updateOrderStatus(this, [[${order.orderId}]])">
+                        <option value="PENDING" th:selected="${order.status.toString() == 'PENDING'}">Pending</option>
+                        <option value="PROCESSING" th:selected="${order.status.toString() == 'PROCESSING'}">Processing</option>
+                        <option value="SHIPPED" th:selected="${order.status.toString() == 'SHIPPED'}">Shipped</option>
+                        <option value="DELIVERED" th:selected="${order.status.toString() == 'DELIVERED'}">Delivered</option>
+                        <option value="CANCELLED" th:selected="${order.status.toString() == 'CANCELLED'}">Cancelled</option>
+                        <option value="RETURNED" th:selected="${order.status.toString() == 'RETURNED'}">Returned</option>
+                    </select>
+                </td>
+                <td th:text="${order.orderDate}">Order Date</td>
+            </tr>
+            </tbody>
 
-        </div>
 
-        <!-- Add more order items as needed -->
+        </table>
     </section>
 </main>
+
+<script th:inline="javascript">
+    function updateOrderStatus(selectElement, orderId) {
+        var newStatus = selectElement.value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/admin/updateOrderStatus?orderId=" + orderId + "&status=" + newStatus, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+            }
+        };
+        xhr.send();
+    }
+</script>
+
 
 </body>
 

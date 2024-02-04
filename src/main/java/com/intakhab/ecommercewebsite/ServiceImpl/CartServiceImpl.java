@@ -11,10 +11,7 @@ import com.intakhab.ecommercewebsite.Service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -30,6 +27,7 @@ public class CartServiceImpl implements CartService {
         this.orderRepo = orderRepo;
     }
 
+    // Method to add a product to the user's cart
     @Override
     public boolean addToCart(User user, UUID productId) {
         Product product = productService.getProductById(productId);
@@ -37,16 +35,16 @@ public class CartServiceImpl implements CartService {
         List<Cart> userCarts = user.getCart();
         Cart cart;
 
+        // Check if the user has any carts
         if (userCarts.isEmpty()) {
-            // If the user has no carts, create a new one
+            // If no cart exists, create a new one
             cart = new Cart();
             cart.setUser(user);
-            cart.setCreatedDate(LocalDateTime.now()); // Set the createdDate
+            cart.setCreatedDate(LocalDateTime.now());
             userCarts.add(cart);
         } else {
-            // Sort carts based on creation time in ascending order
+            // If carts exist, sort them and get the latest cart
             userCarts.sort(Comparator.comparing(Cart::getCreatedDate));
-            // Use the latest cart for the user
             cart = userCarts.get(userCarts.size() - 1);
         }
 
@@ -57,39 +55,58 @@ public class CartServiceImpl implements CartService {
             cart.setProductList(productList);
         }
 
+        // Check if the product is already in the cart
         for (Product product1 : productList) {
             if (product1.getProductId().equals(product.getProductId())) {
-                return false;
+                return false; // Product is already in the cart
             }
         }
 
+        // Add the product to the cart and update repositories
         productList.add(product);
         cartRepo.save(cart);
-
-        // Update product stock quantity
-        product.setStockQuantity(product.getStockQuantity() - 1);
         productRepo.save(product);
 
-        return true;
+        return true; // Product added successfully
     }
 
-
-
-
+    // Method to get products in the user's current cart
     @Override
     public List<Product> getFindCartProducts(User user) {
         List<Cart> userCarts = user.getCart();
+
+        // Check if the user has any carts
+        if (userCarts.isEmpty()) {
+            return Collections.emptyList(); // No carts for the user
+        }
+
         userCarts.sort(Comparator.comparing(Cart::getCreatedDate));
-        Cart lastCart = userCarts.get(userCarts.size() - 1);
-        return lastCart.getProductList();
+
+        // Get the latest cart and filter out products with zero stock
+        if (!userCarts.isEmpty()) {
+            Cart lastCart = userCarts.get(userCarts.size() - 1);
+
+            List<Product> lastCartProductList = lastCart.getProductList();
+            lastCartProductList.removeIf(product -> product.getStockQuantity() == 0);
+            lastCart.setProductList(lastCartProductList);
+            cartRepo.save(lastCart);
+
+            return lastCart.getProductList();
+        } else {
+            return Collections.emptyList(); // No carts for the user
+        }
     }
 
+    // Method to remove a product from the user's cart
     @Override
     public void removeFromCart(User user, UUID productId) {
-        Cart cart = user.getCart().get(user.getCart().size()-1);
-        List<Product> productList = cart.getProductList();
+        List<Cart> userCarts = user.getCart();
+        userCarts.sort(Comparator.comparing(Cart::getCreatedDate));
+        Cart lastCart = userCarts.get(userCarts.size() - 1);
+
+        List<Product> productList = lastCart.getProductList();
         productList.removeIf(product -> product.getProductId().equals(productId));
-        cart.setProductList(productList);
-        cartRepo.save(cart);
+        lastCart.setProductList(productList);
+        cartRepo.save(lastCart);
     }
 }

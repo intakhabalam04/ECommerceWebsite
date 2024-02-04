@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.lang.annotation.Annotation;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

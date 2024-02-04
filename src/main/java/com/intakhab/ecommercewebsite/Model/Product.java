@@ -17,8 +17,9 @@ public class Product {
     private double price;
     private int stockQuantity;
     @Lob
+    @Column(length = 1048576)
     private byte[] productImg;
-
+    private double discount;
     @ManyToOne
     @JoinColumn(name = "categoryId")
     private Category category;

@@ -1,79 +1,205 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - LuxeCart</title>
-    <link rel="stylesheet" href="admin-styles.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
         }
 
         main {
             padding: 20px;
         }
 
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        .modal-content form {
+        /* Admin Stats Styles */
+        .admin-stats {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
 
-        .modal-content label {
+        .admin-stat {
+            flex: 1;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .admin-stat h3 {
+            color: #3498db;
+        }
+
+        /* Order Info Styles */
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .order-stat {
+            flex: 1;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .order-stat h3 {
+            color: #e74c3c;
+        }
+
+        /* Recent Activities Styles */
+        .recent-activities {
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .recent-activities h3 {
+            color: #3498db;
+        }
+
+        .recent-activities ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .recent-activities li {
             margin-bottom: 8px;
         }
 
-        .modal-content input,
-        .modal-content textarea {
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            width: 100%;
+        /* Quick Actions Styles */
+        .quick-actions {
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
         }
 
-        .modal-content button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
+        .quick-actions h3 {
+            color: #27ae60;
+        }
+
+        .quick-actions ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .quick-actions li {
+            flex: 0 0 48%;
+            margin-bottom: 10px;
+            background-color: #27ae60;
+            color: #fff;
             border: none;
             border-radius: 5px;
+            padding: 15px;
+            text-align: center;
             cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .modal-content button:hover {
-            background-color: #45a049;
+        .quick-actions li:hover {
+            background-color: #218c54;
         }
 
+        .quick-actions li a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 5px;
+        }
     </style>
 </head>
 
 <body>
 <div th:replace="~{Admin/fragments}"></div>
 <main>
-    <p>Total Users: <span th:text="${total_users}"></span></p>
-    <p>Total Categories: <span th:text="${total_categories}"></span></p>
-    <p>Total Products: <span th:text="${total_products}"></span></p>
+    <!-- Admin Stats Section -->
+    <div class="admin-stats">
+        <div class="admin-stat">
+            <h3>Total Users</h3>
+            <p th:text="${total_users}">100</p>
+        </div>
+        <div class="admin-stat">
+            <h3>Total Categories</h3>
+            <p th:text="${total_categories}">20</p>
+        </div>
+        <div class="admin-stat">
+            <h3>Total Products</h3>
+            <p th:text="${total_products}">500</p>
+        </div>
+    </div>
+
+    <!-- Order Info Section -->
+    <div class="order-info">
+        <div class="order-stat">
+            <h3>Total Orders</h3>
+            <p th:text="${total_orders}">1000</p>
+        </div>
+        <div class="order-stat">
+            <h3>Total Cancellations</h3>
+            <p th:text="${total_cancellations}">50</p>
+        </div>
+        <div class="order-stat">
+            <h3>Total Returned Orders</h3>
+            <p th:text="${total_returned_orders}">10</p>
+        </div>
+        <div class="order-stat">
+            <h3>Total Delivered Orders</h3>
+            <p th:text="${total_delivered_orders}">800</p>
+        </div>
+        <div class="order-stat">
+            <h3>Total Processing Orders</h3>
+            <p th:text="${total_processing_orders}">140</p>
+        </div>
+    </div>
+
+    <section class="recent-activities">
+        <h3>Recent Activities</h3>
+        <marquee th:onmouseover="this.stop()" th:onmouseout="this.start()" direction="up" scrollamount="2" height="150px">
+            <menu>
+                <span style="color: blue; font-weight: bold; font-size: 18px;">Last 5 Users:</span>
+                <li th:each="user : ${recent_users}">
+                    <span th:text="${user.name + ' registered on ' + user.registerDate}" style="color: red" ></span>
+                </li>
+            </menu>
+        </marquee>
+    </section>
 
 
-
-
-
+    <!-- Quick Actions Section -->
+    <section class="quick-actions">
+        <h3>Quick Actions</h3>
+        <ul>
+            <li>
+                <div>
+                    <span style="font-size: 24px;">📊</span>
+                </div>
+                <a href="#" th:href="@{/admin/view-reports}">View Reports</a>
+            </li>
+        </ul>
+    </section>
 </main>
+
 
 </body>
 

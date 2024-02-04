@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Order Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+
+        main {
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{User/fragments}"></div>
+
+<main>
+    <h2>Order Details</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Products</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Total Amount</th>
+            <th>Action</th> <!-- Added a new column for the Cancel button -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order: ${orderlist}">
+            <td th:text="${order.orderId}">123456789</td>
+            <td>
+                <span th:each="product,no: ${order.cart.productList}"
+                      th:text="${no.index+1}+') '+${product.productName + '   '}"></span>
+                <br/>
+            </td>
+
+            <td th:text="${order.orderDate}"></td>
+            <td th:text="${order.status}">Shipped</td>
+            <td th:text="'₹' + ${order.totalAmount}">$150.00</td>
+            <td>
+                <button th:onclick="cancelConfirmation([[${order.orderId}]])"
+                        th:disabled="${order.status.toString() == 'DELIVERED' or order.status.toString() == 'CANCELLED' or order.status.toString() == 'RETURNED'}"
+                        th:style="${order.status.toString() == 'DELIVERED' or order.status.toString() == 'CANCELLED' or order.status.toString() == 'RETURNED' ? 'cursor: not-allowed;' : ''}">
+                    Cancel
+                </button>
+
+
+
+                <button th:onclick="returnConfirmation([[${order.orderId}]])"
+                        th:disabled="${order.status.toString()!='DELIVERED'}"
+                        th:style="${order.status.toString()!='DELIVERED'?'cursor:not-allowed':''}">
+                    Return
+                </button>
+
+
+            </td>
+
+        </tr>
+
+
+        <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+</main>
+
+<script>
+    function cancelConfirmation(orderId) {
+        console.log(orderId)
+        if (window.confirm('Do you want to cancel ?')) {
+            window.location.href = "/cancelOrder/" + orderId;
+            alert('Order ' + orderId + ' cancelled');
+        }
+    }
+
+    function returnConfirmation(orderId) {
+        if (window.confirm('Do you want to return ?')) {
+            window.location.href="/returnOrder/"+orderId;
+            window.alert('order ' + orderId + ' returned')
+        }
+    }
+</script>
+
+</body>
+</html>

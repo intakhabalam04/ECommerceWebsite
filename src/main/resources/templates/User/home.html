@@ -4,55 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuxeCart Store</title>
-    <style>
-        body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            margin: 2em;
-        }
-
-        .product {
-            border: 1px solid #ddd;
-            padding: 1em;
-            margin: 1em;
-            background-color: white;
-        }
-
-        footer {
-            /*background-color: #333;*/
-            /*color: white;*/
-            text-align: center;
-            padding: 1em;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/static/CSS/User/home.css}">
 </head>
 <body>
 
+<div id="profileImageModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeProfileImageModal()">&times;</span>
+        <p>
+            <button onclick="removeProfileImage()">Remove DP</button>
+            <button onclick="openUploadProfileImageInput()">Upload DP</button>
+        </p>
+    </div>
+</div>
 <div th:replace="~{User/fragments}"></div>
+
 <div class="container">
-    <div class="product">
-        <h2>Product Name</h2>
-        <p>Description of the product. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <p>Price: $19.99</p>
-        <button>Add to Cart</button>
+    <div class="user-details">
+        <div class="profile-picture">
+            <label for="profileImageInput" style="cursor: pointer;" onclick="openProfileImageModal()">
+                <input type="file" id="uploadProfileImageInput" style="display: none;" accept="image/*"
+                       onchange="uploadProfileImage(this)">
+                <img th:src="@{/user/image}" th:title="${user.name}" alt="Profile Image" id="profileImage">
+            </label>
+        </div>
+
+
+        <h2>Welcome, <span th:text="${user.name}"></span>!</h2>
+        <p><span th:text="${user.emailId}"></span></p>
+        <p><span th:text="${user.phoneNumber}"></span></p>
+        <p><span th:text="${user.address}"></span></p>
     </div>
 
-    <!-- Add more product elements as needed -->
-</div>
+    <div class="change-password">
+        <h3>Change Password</h3>
+        <form id="changePasswordForm" onsubmit="preventDefault(); changePassword();">
+            <label for="currentPassword">Current Password:</label>
+            <input type="password" id="currentPassword" name="currentPassword" required>
 
-<script>
-    function logout() {
-        // Add your logout logic here
-        alert('Logged out'); // Example: Display an alert for demonstration
-    }
-</script>
+            <label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+            <button type="submit">Change Password</button>
+        </form>
+    </div>
+</div>
+<script th:src="@{/static/js/User/home.js}"></script>
 </body>
 </html>

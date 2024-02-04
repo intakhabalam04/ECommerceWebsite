@@ -1,5 +1,6 @@
 package com.intakhab.ecommercewebsite.Model;
 
+import com.intakhab.ecommercewebsite.Enum.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,10 +12,10 @@ import java.util.UUID;
 @Data
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID orderId;
+    private Long orderId;
     private String orderDate;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private double totalAmount;
     @OneToOne
     private Cart cart;

@@ -12,12 +12,11 @@
             background-color: #f4f4f4;
         }
 
-        .container {
-            margin: 2em;
-        }
-
         .cart-container {
             margin-top: 2em;
+            padding: 1em;
+            background-color: #fff;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
         }
 
         .cart-table {
@@ -28,7 +27,7 @@
 
         .cart-table th, .cart-table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: left;
         }
 
@@ -46,6 +45,22 @@
             margin-top: 1em;
             display: flex;
             justify-content: space-between;
+        }
+
+        .remove-from-cart-link {
+            text-decoration: none;
+            color: #000000;
+            cursor: pointer;
+            padding: 6px 12px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .remove-from-cart-link:hover {
+            background-color: #ffe6e6;
+            text-decoration: underline;
         }
 
         footer {
@@ -83,6 +98,7 @@
             <tr>
                 <th>Product Name</th>
                 <th>Price</th>
+                <th>Quantity</th>
                 <th>Total</th>
                 <th>Action</th>
             </tr>
@@ -91,17 +107,17 @@
             <!-- Iterate over the cart items -->
             <tr th:each="item : ${productLists}">
                 <td th:text="${item.productName}">Product Name</td>
-                <td th:text="'$' + ${item.price}">0.00</td>
-                <td th:text="'$' + (1 * ${item.price})">Calculating total</td>
+                <td th:text="'₹'+${(item.price)-(item.price*item.discount)/100}">0.00</td>
+                <td>1</td>
+                <td th:text="'₹' + (${(item.price)-(item.price*item.discount)/100})">Calculating total</td>
                 <td>
-                    <a th:onclick="confirmDelete([[${item.productId}]])" style="cursor: pointer;color: red"
+                    <a th:onclick="confirmDelete([[${item.productId}]])"
                        class="remove-from-cart-link">Remove</a>
                 </td>
             </tr>
             </tbody>
         </table>
         <p class="cart-total">Total: <span th:text="${cartprice}">Calculating total</span></p>
-
 
         <!-- Cart Buttons -->
         <div class="cart-buttons">
@@ -113,24 +129,20 @@
 
 <script>
     function logout() {
-        // Add your logout logic here
-        alert('Logged out'); // Example: Display an alert for demonstration
+        alert('Logged out');
     }
 
     function editCart() {
-        // Add your edit cart logic here
-        alert('Edit Cart'); // Example: Display an alert for demonstration
+        alert('Edit Cart');
     }
 
     function proceedToCheckout() {
-        // Replace with the actual checkout page URL
-        // alert('Proceed to Checkout'); // Example: Display an alert for demonstration
         window.location.href = "/checkout";
     }
 
     function confirmDelete(productId) {
         console.log(productId)
-        const confirmation = confirm("Are you sure want to delete ?")
+        const confirmation = confirm("Are you sure want to remove from cart?")
         if (confirmation) {
             window.location.href = "/removeFromCart/" + productId;
         }
