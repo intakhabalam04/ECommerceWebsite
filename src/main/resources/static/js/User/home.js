@@ -51,7 +51,9 @@ async function uploadProfileImage(input) {
 
                 const getImageResponse = await fetch('/user/image');
                 const imageData = await getImageResponse.arrayBuffer();
-                const blob = new Blob([imageData], {type: 'image/jpeg'});
+                const blob = new Blob([imageData], {
+                    type: 'image/jpeg'
+                });
                 profileImage.src = URL.createObjectURL(blob);
                 alert('Profile image uploaded successfully!');
             } else {
@@ -81,7 +83,9 @@ async function removeProfileImage() {
     const profileImage = document.getElementById('profileImage');
     const getImageResponse = await fetch('/user/image');
     const imageData = await getImageResponse.arrayBuffer();
-    const blob = new Blob([imageData], {type: 'image/jpeg'});
+    const blob = new Blob([imageData], {
+        type: 'image/jpeg'
+    });
     profileImage.src = URL.createObjectURL(blob);
 
     alert("Profile image removed!");

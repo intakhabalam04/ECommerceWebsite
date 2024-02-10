@@ -5,75 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Management - LuxeCart</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: #343a40;
-        }
-
-        main {
-            padding: 20px;
-        }
-
-        .order-management {
-            text-align: center;
-        }
-
-        .order-item {
-            background-color: #ffffff;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-
-        .order-item:hover {
-            /*background-color: #5e99f1;*/
-            color: #007bff;
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        }
-        .customer-orders {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .customer-orders th,
-        .customer-orders td {
-            border: 1px solid #dee2e6;
-            padding: 12px;
-            text-align: left;
-        }
-
-        .customer-orders th {
-            background-color: #3498db;
-            color: #fff;
-        }
-
-        .customer-orders tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .customer-orders tr:hover {
-            background-color: #cce5ff;
-        }
-
-        /* Responsive styling for smaller screens */
-        @media (max-width: 768px) {
-            .customer-orders th,
-            .customer-orders td {
-                display: block;
-                width: 100%;
-                box-sizing: border-box;
-            }
-        }
-
-    </style>
+    <link rel="stylesheet" th:href="@{/static/CSS/Admin/order.css}">
 </head>
 
 <body>
@@ -120,21 +52,7 @@
     </section>
 </main>
 
-<script th:inline="javascript">
-    function updateOrderStatus(selectElement, orderId) {
-        var newStatus = selectElement.value;
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/admin/updateOrderStatus?orderId=" + orderId + "&status=" + newStatus, true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-            }
-        };
-        xhr.send();
-    }
-</script>
+<script th:inline="javascript" th:src="@{/static/js/Admin/order.js}"></script>
 
 
 </body>

@@ -1,0 +1,74 @@
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.cart-container {
+    margin-top: 2em;
+    padding: 1em;
+    background-color: #fff;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+.cart-table th, .cart-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.cart-table th {
+    background-color: #555;
+    color: white;
+}
+
+.cart-total {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.cart-buttons {
+    margin-top: 1em;
+    display: flex;
+    justify-content: space-between;
+}
+
+.remove-from-cart-link {
+    text-decoration: none;
+    color: #000000;
+    cursor: pointer;
+    padding: 6px 12px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.remove-from-cart-link:hover {
+    background-color: #ffe6e6;
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    padding: 1em;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+a {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Use the parent's color (white) */
+}
+
+a:hover {
+    text-decoration: none; /* Remove underline on hover */
+}

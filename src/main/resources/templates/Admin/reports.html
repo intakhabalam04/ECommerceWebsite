@@ -4,56 +4,7 @@
     <meta charset="UTF-8">
     <title>Reports</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            padding: 10px;
-        }
-
-        #myPlot {
-            width: 100%;
-            max-width: 800px;
-            margin: auto;
-        }
-
-        #loadingContainer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        #loadingSpinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        #loadingMessage {
-            font-size: 18px;
-            color: #3498db;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/static/CSS/Admin/reports.css}">
 </head>
 <body onload="generateMonthlyReports()">
 
@@ -67,54 +18,7 @@
     <div id="myPlot" style="display: none;"></div>
 </div>
 
-<script>
-    async function generateMonthlyReports() {
-        // Display loading message
-        document.getElementById('loadingMessage').innerText = 'Loading... Please wait';
-
-        const xArray = [];
-        const yArray = [];
-
-        try {
-            const response = await fetch(`/admin/getReports`);
-            const data = await response.json();
-
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    xArray.push(key);
-                    yArray.push(data[key]);
-                }
-            }
-
-            // Hide loading message and display the chart
-            await new Promise(resolve => setTimeout(resolve, 200));
-            document.getElementById('loadingMessage').style.display = 'none';
-            document.getElementById('loadingSpinner').style.display = 'none';
-            document.getElementById('myPlot').style.display = 'block';
-
-            // You can print the arrays to the console if needed
-            for (let i = 0; i < xArray.length; i++) {
-                console.log(xArray[i] + " : " + yArray[i]);
-            }
-
-            const dataPlot = [{
-                x: xArray,
-                y: yArray,
-                type: "bar",
-                orientation: "v",
-                marker: {color: "rgba(0,0,255,0.6)"}
-            }];
-
-            const layout = {title: "Daily Sale Reports"};
-            Plotly.newPlot("myPlot", dataPlot, layout);
-
-        } catch (e) {
-            // Handle errors and update the loading message
-            document.getElementById('loadingMessage').innerText = 'Error loading data.';
-            console.error("Error:", e.toString());
-        }
-    }
-</script>
+<script th:src="@{/static/js/Admin/reports.js}"></script>
 
 </body>
 </html>

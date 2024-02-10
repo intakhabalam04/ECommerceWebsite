@@ -1,0 +1,120 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+main {
+    padding: 20px;
+}
+
+/* Admin Stats Styles */
+.admin-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.admin-stat {
+    flex: 1;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.admin-stat h3 {
+    color: #3498db;
+}
+
+/* Order Info Styles */
+.order-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.order-stat {
+    flex: 1;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.order-stat h3 {
+    color: #e74c3c;
+}
+
+/* Recent Activities Styles */
+.recent-activities {
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.recent-activities h3 {
+    color: #3498db;
+}
+
+.recent-activities ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.recent-activities li {
+    margin-bottom: 8px;
+}
+
+/* Quick Actions Styles */
+.quick-actions {
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.quick-actions h3 {
+    color: #27ae60;
+}
+
+.quick-actions ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.quick-actions li {
+    flex: 0 0 48%;
+    margin-bottom: 10px;
+    background-color: #27ae60;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quick-actions li:hover {
+    background-color: #218c54;
+}
+
+.quick-actions li a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 5px;
+}

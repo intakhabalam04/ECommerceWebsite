@@ -69,7 +69,6 @@ public class CartController {
     @GetMapping("/validateCoupon")
     @ResponseBody
     public boolean validateCoupon(@RequestParam String couponCode) {
-
         return "Intakhab".equals(couponCode);
     }
 

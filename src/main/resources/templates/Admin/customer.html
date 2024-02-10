@@ -5,58 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Management - LuxeCart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        main {
-            padding: 20px;
-        }
-
-        .customer-management {
-            text-align: center;
-        }
-        .customer-orders table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .customer-orders th, .customer-orders td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .customer-orders th {
-            background-color: #333;
-            color: #fff;
-        }
-
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit; /* Use the default color of the parent element */
-        }
-
-        a:hover {
-            text-decoration: none /* Add underline on hover if needed */
-        }
-
-
-    </style>
+    <link rel="stylesheet" th:href="@{/static/CSS/Admin/customer.css}">
 </head>
 
 <body>
@@ -98,22 +47,7 @@
 
 </body>
 
-<script>
-    // JavaScript code to show the spinner for 2 seconds and then hide it
-    document.onreadystatechange = function () {
-        var spinner = document.getElementById("loading-spinner");
-        var customerSection = document.getElementById("customer-link");
-
-        // Show the spinner while the page is loading
-        spinner.style.display = "block";
-
-        // Hide the spinner after 2 seconds
-        setTimeout(function () {
-            spinner.style.display = "none";
-            customerSection.style.display = "block"; // Show the customer section
-        }, 2000); // 2000 milliseconds (2 seconds)
-    };
-</script>
+<script th:src="@{/static/js/Admin/customer.js}"></script>
 
 
 </html>

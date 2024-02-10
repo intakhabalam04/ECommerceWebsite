@@ -4,42 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Order Details</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 1em;
-            text-align: center;
-        }
-
-        main {
-            margin: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #333;
-            color: #fff;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/static/CSS/User/order-history.css}">
 </head>
 <body>
 <div th:replace="~{User/fragments}"></div>
@@ -95,22 +60,7 @@
     </table>
 </main>
 
-<script>
-    function cancelConfirmation(orderId) {
-        console.log(orderId)
-        if (window.confirm('Do you want to cancel ?')) {
-            window.location.href = "/cancelOrder/" + orderId;
-            alert('Order ' + orderId + ' cancelled');
-        }
-    }
-
-    function returnConfirmation(orderId) {
-        if (window.confirm('Do you want to return ?')) {
-            window.location.href="/returnOrder/"+orderId;
-            window.alert('order ' + orderId + ' returned')
-        }
-    }
-</script>
+<script th:src="@{/static/js/User/order-history.js}"></script>
 
 </body>
 </html>

@@ -4,74 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuxeCart Store - Checkout</title>
-    <style>
-        body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            margin: 2em;
-        }
-
-        .checkout-container {
-            margin-top: 2em;
-            background-color: white;
-            padding: 2em;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .checkout-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 1em;
-        }
-
-        .checkout-form label {
-            display: block;
-            margin-bottom: 0.5em;
-        }
-
-        .checkout-form input,
-        .checkout-form select {
-            width: 100%;
-            padding: 0.5em;
-            margin-top: 0.3em;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .checkout-buttons {
-            margin-top: 1em;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        footer {
-            text-align: center;
-            padding: 1em;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        a:hover {
-            text-decoration: none;
-        }
-
-    </style>
+    <link rel="stylesheet" th:href="@{/static/CSS/User/checkout.css}">
 </head>
 <body>
 <div th:replace="~{User/fragments}"></div>
+<div id="toast-container"></div>
 
 <div class="container">
     <!-- Checkout Section -->
@@ -105,46 +42,7 @@
     </div>
 </div>
 
-<script>
-    function returnToCart() {
-        window.location.href = "/user/cart";
-    }
-
-    function doCheckout() {
-        window.location.href = "/doCheckout";
-    }
-
-    function placeOrder() {
-        alert('Order placed successfully');
-        doCheckout();
-    }
-    async function applyCoupon() {
-        var couponCode = document.getElementById("couponCode").value;
-
-        try {
-            const response = await fetch(`/validateCoupon?couponCode=${couponCode}`);
-            if (response.ok) {
-                const isValidCoupon = await response.json();
-
-                if (isValidCoupon) {
-
-                    alert("Coupon applied successfully!");
-                    document.getElementById("couponMessage").innerHTML="Coupon applied successfully!";
-                    document.getElementById("totalAmount").value=document.getElementById("totalAmount").value*0.9
-                    console.log(document.getElementById("totalAmount").value)
-                    // Additional logic if needed
-                } else {
-                    alert("Invalid coupon code. Please try again.");
-                    document.getElementById("couponMessage").innerHTML="Invalid coupon code. Please try again."
-                }
-            } else {
-                console.error("Failed to validate coupon");
-            }
-        } catch (error) {
-            console.error("Error during coupon validation", error);
-        }
-    }
-</script>
+<script th:src="@{/static/js/User/checkout.js}"></script>
 
 </body>
 </html>
