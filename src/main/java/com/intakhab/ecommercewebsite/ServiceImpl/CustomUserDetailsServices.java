@@ -35,7 +35,7 @@ public class CustomUserDetailsServices implements UserDetailsService {
     }
 
     public Collection<? extends GrantedAuthority> authorities(User user) {
-        String rolesString = user.getRole();
+        String rolesString = user.getRole().toString();
         String[] rolesArray = rolesString.split(",");
 
         return Arrays.stream(rolesArray).map(role -> new SimpleGrantedAuthority("ROLE_" + role.trim())).collect(Collectors.toList());

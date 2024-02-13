@@ -24,7 +24,10 @@
         </thead>
         <tbody>
         <tr th:each="order: ${orderlist}">
-            <td th:text="${order.orderId}">123456789</td>
+            <!-- Changed the Order ID to an anchor tag -->
+            <td>
+                <a th:href="'/order/track/' + ${order.orderId}" th:text="${order.orderId}">123456789</a>
+            </td>
             <td>
                 <span th:each="product,no: ${order.cart.productList}"
                       th:text="${no.index+1}+') '+${product.productName + '   '}"></span>
@@ -40,21 +43,13 @@
                         th:style="${order.status.toString() == 'DELIVERED' or order.status.toString() == 'CANCELLED' or order.status.toString() == 'RETURNED' ? 'cursor: not-allowed;' : ''}">
                     Cancel
                 </button>
-
-
-
                 <button th:onclick="returnConfirmation([[${order.orderId}]])"
                         th:disabled="${order.status.toString()!='DELIVERED'}"
                         th:style="${order.status.toString()!='DELIVERED'?'cursor:not-allowed':''}">
                     Return
                 </button>
-
-
             </td>
-
         </tr>
-
-
         <!-- Add more rows as needed -->
         </tbody>
     </table>

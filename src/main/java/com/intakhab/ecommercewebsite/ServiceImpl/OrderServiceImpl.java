@@ -10,9 +10,11 @@ import com.intakhab.ecommercewebsite.Repository.ProductRepo;
 import com.intakhab.ecommercewebsite.Repository.UserRepo;
 import com.intakhab.ecommercewebsite.Service.DateAndTimeService;
 import com.intakhab.ecommercewebsite.Service.OrderService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -21,12 +23,14 @@ import java.util.stream.Collectors;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    @Value("${order.date.time.format}")
+    private String dateTimeFormatPattern;
+
     private final OrderRepo orderRepo;
     private final UserRepo userRepo;
     private final ProductRepo productRepo;
     private final DateAndTimeService dateAndTimeService;
 
-    // Constructor to inject dependencies
     public OrderServiceImpl(OrderRepo orderRepo, UserRepo userRepo, ProductRepo productRepo, DateAndTimeService dateAndTimeService) {
         this.orderRepo = orderRepo;
         this.userRepo = userRepo;
@@ -34,10 +38,9 @@ public class OrderServiceImpl implements OrderService {
         this.dateAndTimeService = dateAndTimeService;
     }
 
-    // Process an order
     @Override
     public void checkOrder(User user) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormatPattern);
 
         Order order = createOrder(user);
         Cart lastCart = getLastCart(user);
@@ -45,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
         if (lastCart != null && !lastCart.getProductList().isEmpty()) {
             processOrderItems(order, lastCart);
         } else {
-            return; // Skip processing if the last cart is empty
+            return;
         }
 
         setOrderDetailsAndSave(order, formatter);
@@ -72,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
         double total = 0;
         for (Product product : cart.getProductList()) {
             if (product.getStockQuantity() == 0) {
-                return; // Skip processing if stock is insufficient
+                return;
             }
             product.setStockQuantity(product.getStockQuantity() - 1);
             productRepo.save(product);
@@ -84,7 +87,9 @@ public class OrderServiceImpl implements OrderService {
 
     private void setOrderDetailsAndSave(Order order, DateTimeFormatter formatter) {
         order.setOrderDate(LocalDateTime.now().format(formatter));
-        order.setStatus(OrderStatus.PROCESSING);
+        order.setStatus(OrderStatus.PENDING);
+        order.setExpectedDeliveryDate(LocalDate.now().plusDays(7));
+        order.setTrackingNo(generateTrackingNo());
         orderRepo.save(order);
     }
 
@@ -98,8 +103,13 @@ public class OrderServiceImpl implements OrderService {
         userRepo.save(user);
     }
 
+    private long generateTrackingNo() {
+        Random random = new Random();
+        return (long) (random.nextDouble() * 9_000_000_000L) + 1_000_000_000L;
 
-    // Retrieve all orders sorted by orderId in descending order
+    }
+
+
     @Override
     public List<Order> findAllOrders() {
         return orderRepo.findAll(Sort.by("orderId").descending());
@@ -108,10 +118,7 @@ public class OrderServiceImpl implements OrderService {
     // Retrieve all orders for a specific user
     @Override
     public List<Order> findAllOrders(UUID id) {
-        return findAllOrders()
-                .stream()
-                .filter(order -> order.getUser().getId().equals(id))
-                .collect(Collectors.toList());
+        return findAllOrders().stream().filter(order -> order.getUser().getId().equals(id)).collect(Collectors.toList());
     }
 
     // Retrieve an order by orderId
@@ -134,9 +141,7 @@ public class OrderServiceImpl implements OrderService {
 
     // Helper method to get the next orderId based on the last order
     private Long getNextOrderId(Order lastOrder, long orderDate) {
-        return (lastOrder.getOrderId() / 10000) * 10000 == orderDate
-                ? lastOrder.getOrderId() + 1
-                : orderDate + 1;
+        return (lastOrder.getOrderId() / 10000) * 10000 == orderDate ? lastOrder.getOrderId() + 1 : orderDate + 1;
     }
 
     // Cancel an order and update stock quantities
@@ -171,36 +176,25 @@ public class OrderServiceImpl implements OrderService {
     // Retrieve all processing orders
     @Override
     public List<Order> getTotalProcessingOrders() {
-        return getTotalOrders().stream()
-                .filter(order -> order.getStatus().equals(OrderStatus.PROCESSING))
-                .collect(Collectors.toList());
+        return getTotalOrders().stream().filter(order -> order.getStatus().equals(OrderStatus.PROCESSING)).collect(Collectors.toList());
     }
 
     // Retrieve all delivered orders
     @Override
     public List<Order> getTotalDeliveredOrders() {
-        return getTotalOrders().stream()
-                .filter(order -> order.getStatus().equals(OrderStatus.DELIVERED))
-                .collect(Collectors.toList());
+        return getTotalOrders().stream().filter(order -> order.getStatus().equals(OrderStatus.DELIVERED)).collect(Collectors.toList());
     }
 
     // Retrieve all returned orders
     @Override
     public List<Order> getTotalReturnedOrders() {
-        return getTotalOrders().stream()
-                .filter(order -> order.getStatus().equals(OrderStatus.RETURNED))
-                .collect(Collectors.toList());
+        return getTotalOrders().stream().filter(order -> order.getStatus().equals(OrderStatus.RETURNED)).collect(Collectors.toList());
     }
 
     // Generate reports on the number of orders per date
     @Override
     public Map<String, Long> generateReports() {
-        return getTotalOrders()
-                .stream()
-                .collect(Collectors.groupingBy(
-                        order -> dateAndTimeService.extractDateFromOrderDate(order.getOrderDate()),
-                        Collectors.counting()
-                ));
+        return getTotalOrders().stream().collect(Collectors.groupingBy(order -> dateAndTimeService.extractDateFromOrderDate(order.getOrderDate()), Collectors.counting()));
     }
 
     // Update the status of an order
@@ -219,10 +213,8 @@ public class OrderServiceImpl implements OrderService {
                 product.setStockQuantity(product.getStockQuantity() + 1);
                 productRepo.save(product);
             });
-
             order.setStatus(OrderStatus.RETURNED);
             orderRepo.save(order);
         });
     }
-
 }

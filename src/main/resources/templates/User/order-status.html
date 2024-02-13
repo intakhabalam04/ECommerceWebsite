@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking</title>
+    <link rel="stylesheet" th:href="@{/static/CSS/User/order-status.css}"> <!-- Include external CSS file -->
+</head>
+<body th:onload="updateProgress([[${order.orderId}]])">
+<h1>Order Tracking</h1>
+<div class="order-status">
+    <div class="status-item">
+        <label>Order ID:</label>
+        <span th:text="${order.orderId}">#123456</span>
+    </div>
+    <div class="status-item">
+        <label>Status:</label>
+        <span id="order-status" th:text="${order.status}">Processing</span> <!-- Dynamically update status here -->
+    </div>
+    <!-- Add more status items for other details such as order date, delivery date, etc. -->
+    <div class="status-item">
+        <label>Order Date:</label>
+        <span th:text="${order.orderDate}">February 15, 2024</span> <!-- Display dynamic expected delivery date here -->
+    </div>
+    <div class="status-item">
+        <label>Expected Delivery:</label>
+        <span th:text="${order.expectedDeliveryDate}">February 15, 2024</span> <!-- Display dynamic expected delivery date here -->
+    </div>
+    <div class="status-item">
+        <label>Tracking #:</label>
+        <span th:text="${order.trackingNo}">1234567890</span> <!-- Display dynamic tracking number here -->
+    </div>
+    <div class="progress">
+        <div class="progress-bar"></div> <!-- Progress bar -->
+        <div class="tick tick-1" style="left: 20%;" data-text="Pending"></div> <!-- Tick marks with text -->
+        <div class="tick tick-2" style="left: 40%;" data-text="Processing"></div>
+        <div class="tick tick-3" style="left: 60%;" data-text="Shipped"></div>
+        <div class="tick tick-4" style="left: 80%;" data-text="Out for delivery"></div>
+        <div class="tick tick-5" style="right: 0;" data-text="Delivered"></div>
+    </div>
+
+</div>
+<script th:src="@{/static/js/User/order-status.js}"></script> <!-- Include external JavaScript file -->
+</body>
+</html>

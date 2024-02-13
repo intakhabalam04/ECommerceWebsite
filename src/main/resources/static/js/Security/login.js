@@ -14,19 +14,19 @@ function closeForgotPasswordModal() {
 }
 
 async function submitForgotPage() {
-    const userId = document.getElementById("forgotUsername").value;
+    const userId = document.getElementById("forgotUsername").value
     const sendResetLinkButton = document.getElementById("sendResetLinkButton");
     const spinner = document.getElementById("loadingSpinner");
     const responseMessage = document.getElementById("responseMessage");
 
     responseMessage.innerText = "*Please enter your email address or userHandle."
-    responseMessage.className = "forgot-label"; // Add the forgot-label class
+    responseMessage.className = "forgot-label";
 
     try {
         sendResetLinkButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
         sendResetLinkButton.disabled = true;
 
-        const response = await fetch(`/forgot?userId=${userId}`);
+        const response = await fetch(`/forgot?userId=${userId}`)
 
         if (response.ok) {
             const isResetMailSent = await response.json();

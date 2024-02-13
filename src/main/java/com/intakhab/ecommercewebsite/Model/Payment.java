@@ -1,5 +1,6 @@
 package com.intakhab.ecommercewebsite.Model;
 
+import com.intakhab.ecommercewebsite.Enum.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,7 +15,8 @@ public class Payment {
     private LocalDateTime paymentDate;
     private double amount;
     private String paymentMethod;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
     @OneToOne
     @JoinColumn(name = "orderId")
     private Order order;

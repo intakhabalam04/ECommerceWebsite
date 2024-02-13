@@ -1,6 +1,7 @@
 package com.intakhab.ecommercewebsite.ServiceImpl;
 
 import com.intakhab.ecommercewebsite.Config.SecurityConfig;
+import com.intakhab.ecommercewebsite.Enum.UserRole;
 import com.intakhab.ecommercewebsite.Model.Email;
 import com.intakhab.ecommercewebsite.Model.User;
 import com.intakhab.ecommercewebsite.Repository.UserRepo;
@@ -46,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public User registerNewUser(User newRegisteredUser) {
         // Set user details and save
-        newRegisteredUser.setRole("USER");
+        newRegisteredUser.setRole(UserRole.USER);
         newRegisteredUser.setToken("NULL");
         newRegisteredUser.setPassword(passwordEncoder.encode(newRegisteredUser.getPassword()));
         newRegisteredUser.setTokenExpiryTime(0);

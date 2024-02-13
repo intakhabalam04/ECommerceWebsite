@@ -72,6 +72,7 @@ public class AdminController {
         int totalUser = userService.getAllUsers().size();
         int totalCategories = categoryService.getAllCategories().size();
         int totalProducts = productService.getAllProducts().size();
+
         model.put("total_users", totalUser);
         model.put("total_categories", totalCategories);
         model.put("total_products", totalProducts);
@@ -81,7 +82,6 @@ public class AdminController {
         model.put("total_delivered_orders", orderService.getTotalDeliveredOrders() != null ? orderService.getTotalDeliveredOrders().size() : 0);
         model.put("total_returned_orders", orderService.getTotalReturnedOrders() != null ? orderService.getTotalReturnedOrders().size() : 0);
         model.put("recent_users", userService.findLast5User());
-
         model.put("user", securityConfig.getCurrentUser());
 
         return new ModelAndView(adminHomeView, model);
@@ -155,7 +155,7 @@ public class AdminController {
             RedirectView rd = new RedirectView("/admin/product");
             return new ModelAndView(rd);
         }
-        boolean success = productService.addNewProduct(product);
+        boolean added = productService.addNewProduct(product);
         RedirectView rd = new RedirectView("/admin/product");
         return new ModelAndView(rd);
     }
@@ -196,7 +196,6 @@ public class AdminController {
         try {
             orderService.updateOrderStatus(orderId, status);
             return ResponseEntity.ok("Order status updated successfully");
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating order status");
 

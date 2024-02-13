@@ -4,6 +4,7 @@ import com.intakhab.ecommercewebsite.Enum.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private double totalAmount;
+    private LocalDate expectedDeliveryDate;
+    private long trackingNo;
     @OneToOne
     private Cart cart;
     @ManyToOne

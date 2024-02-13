@@ -1,5 +1,6 @@
 package com.intakhab.ecommercewebsite.Model;
 
+import com.intakhab.ecommercewebsite.Enum.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,8 @@ public class User {
     private String phoneNumber;
     @Column(nullable = false)
     private String password;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
     private String address;
     private String token;
     private long tokenExpiryTime;
