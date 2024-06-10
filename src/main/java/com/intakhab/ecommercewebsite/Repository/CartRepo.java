@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface CartRepo extends JpaRepository<Cart , UUID> {
     Cart findByUser(User user);
+
 }

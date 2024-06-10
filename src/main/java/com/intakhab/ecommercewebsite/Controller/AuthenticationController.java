@@ -83,7 +83,6 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ModelAndView submitRegistrationForm(@ModelAttribute("NewUser") User newRegisteredUser) {
-        System.out.println(Arrays.toString(newRegisteredUser.getProfileImg()));
         User user = authenticationService.registerNewUser(newRegisteredUser);
         Map<String, Object> model = new HashMap<>();
         if (user == null) {

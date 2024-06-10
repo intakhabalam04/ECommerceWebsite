@@ -1,15 +1,14 @@
 package com.intakhab.ecommercewebsite.Controller;
 
 import com.intakhab.ecommercewebsite.Config.SecurityConfig;
-import com.intakhab.ecommercewebsite.Model.Category;
-import com.intakhab.ecommercewebsite.Model.Order;
-import com.intakhab.ecommercewebsite.Model.Product;
-import com.intakhab.ecommercewebsite.Model.User;
+import com.intakhab.ecommercewebsite.Model.*;
 import com.intakhab.ecommercewebsite.Service.CartService;
 import com.intakhab.ecommercewebsite.Service.CategoryService;
 import com.intakhab.ecommercewebsite.Service.ProductService;
 import com.intakhab.ecommercewebsite.Service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -67,13 +66,11 @@ public class UserController {
     public ModelAndView getCartPage() {
         Map<String, Object> model = new HashMap<>();
         User user = securityConfig.getCurrentUser();
-        List<Product> productLists = cartService.getFindCartProducts(user);
+        List<CartItem> cartItemList = cartService.getFindCartProducts(user);
 
-        double cartPrice = productLists.stream()
-                .mapToDouble(product -> product.getPrice() - (product.getPrice() * product.getDiscount()) / 100)
-                .sum();
+        double cartPrice=cartService.getLastCart(user).getCartPrice();
 
-        model.put("productLists", productLists);
+        model.put("cartItemList", cartItemList);
         model.put("cartprice", cartPrice);
         model.put("user", securityConfig.getCurrentUser());
 
@@ -95,4 +92,22 @@ public class UserController {
         return new ModelAndView(historyView, model);
     }
 
+    @GetMapping("/updateQuantity")
+    @ResponseBody
+    public ResponseEntity<Double> updateCartItemQuantity(@RequestParam("cartItemId") Long cartItemId, @RequestParam("type") String type) {
+        User user = securityConfig.getCurrentUser();
+        double updatedAmount = cartService.updateCartItemQuantity(cartItemId, type);
+        cartService.updateCartPrice(user);
+        return new ResponseEntity<>(updatedAmount, HttpStatus.OK);
+    }
+
+    @GetMapping("/getCartPrice")
+    @ResponseBody
+    public ResponseEntity<Double> getCartPrice(){
+        User user= securityConfig.getCurrentUser();
+        double cartPrice = cartService.getCartPrice(user);
+        return new ResponseEntity<>(cartPrice,HttpStatus.OK);
+    }
+
+    
 }

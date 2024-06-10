@@ -38,7 +38,7 @@ public class User {
     @Column(length = 1048576)
     private byte[] profileImg;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Cart> cart;
+    private List<Cart> cartList;
     @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
     private List<Order> orderList;
     private LocalDate registerDate;

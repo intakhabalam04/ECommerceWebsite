@@ -46,9 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
         List<User> userLists = userRepo.findAll(Sort.by("name").ascending());
-        return userLists.stream()
-                .filter(user -> user.getRole().equals(UserRole.USER))
-                .collect(Collectors.toList());
+        return userLists.stream().filter(user -> user.getRole().equals(UserRole.USER)).collect(Collectors.toList());
     }
 
     @Override
@@ -68,10 +66,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findLast5User() {
         List<User> users = findAllUsers();
-        return users.stream()
-                .sorted(Comparator.comparing(User::getRegisterDate).reversed())
-                .limit(5)
-                .collect(Collectors.toList());
+        return users.stream().sorted(Comparator.comparing(User::getRegisterDate).reversed()).limit(5).collect(Collectors.toList());
     }
 
     @Override

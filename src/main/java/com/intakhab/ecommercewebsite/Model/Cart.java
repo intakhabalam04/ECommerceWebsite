@@ -22,11 +22,7 @@ public class Cart {
     private User user;
     @OneToOne(mappedBy = "cart")
     private Order order;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "cart_product",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> productList;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<CartItem> cartItemList;
+    private double cartPrice;
 }

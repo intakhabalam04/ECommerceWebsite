@@ -1,10 +1,7 @@
 package com.intakhab.ecommercewebsite.ServiceImpl;
 
 import com.intakhab.ecommercewebsite.Enum.OrderStatus;
-import com.intakhab.ecommercewebsite.Model.Cart;
-import com.intakhab.ecommercewebsite.Model.Order;
-import com.intakhab.ecommercewebsite.Model.Product;
-import com.intakhab.ecommercewebsite.Model.User;
+import com.intakhab.ecommercewebsite.Model.*;
 import com.intakhab.ecommercewebsite.Repository.OrderRepo;
 import com.intakhab.ecommercewebsite.Repository.ProductRepo;
 import com.intakhab.ecommercewebsite.Repository.UserRepo;
@@ -45,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = createOrder(user);
         Cart lastCart = getLastCart(user);
 
-        if (lastCart != null && !lastCart.getProductList().isEmpty()) {
+        if (lastCart != null && !lastCart.getCartItemList().isEmpty()) {
             processOrderItems(order, lastCart);
         } else {
             return;
@@ -63,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Cart getLastCart(User user) {
-        List<Cart> userCarts = user.getCart();
+        List<Cart> userCarts = user.getCartList();
         if (!userCarts.isEmpty()) {
             userCarts.sort(Comparator.comparing(Cart::getCreatedDate));
             return userCarts.get(userCarts.size() - 1);
@@ -73,14 +70,19 @@ public class OrderServiceImpl implements OrderService {
 
     private void processOrderItems(Order order, Cart cart) {
         double total = 0;
-        for (Product product : cart.getProductList()) {
-            if (product.getStockQuantity() == 0) {
+        for (CartItem cartItem : cart.getCartItemList()) {
+            if (cartItem.getProduct().getStockQuantity() == 0) {
                 return;
             }
+            Product product=cartItem.getProduct();
             product.setStockQuantity(product.getStockQuantity() - 1);
             productRepo.save(product);
-            total += product.getPrice() - (product.getPrice() * product.getDiscount()) / 100;
         }
+
+        List<CartItem> cartItemList = cart.getCartItemList();
+        total=cartItemList.stream()
+                .mapToDouble(CartItem::getSubTotal)
+                .sum();
         order.setCart(cart);
         order.setTotalAmount(total);
     }
@@ -94,12 +96,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void createNewCartForUser(User user) {
-        List<Cart> cartList = user.getCart();
+        List<Cart> cartList = user.getCartList();
         Cart newCart = new Cart();
         cartList.add(newCart);
         newCart.setUser(user);
         newCart.setCreatedDate(LocalDateTime.now());
-        user.setCart(cartList);
+        user.setCartList(cartList);
         userRepo.save(user);
     }
 
@@ -148,15 +150,22 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Long orderId) {
         orderRepo.findById(orderId).ifPresent(order -> {
-            order.getCart().getProductList().forEach(product -> {
-                product.setStockQuantity(product.getStockQuantity() + 1);
+            Cart cart = order.getCart();
+            List<CartItem> cartItems = cart.getCartItemList();
+            for (CartItem cartItem : cartItems) {
+                Product product = cartItem.getProduct();
+                int currentStockQuantity = product.getStockQuantity();
+                // Assuming each cart item represents one quantity of the product
+                product.setStockQuantity(currentStockQuantity + 1); // Increment by 1 for each canceled item
                 productRepo.save(product);
-            });
+            }
 
             order.setStatus(OrderStatus.CANCELLED);
             orderRepo.save(order);
         });
     }
+
+
 
 
     // Retrieve all orders
@@ -209,12 +218,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void returnOrder(Long orderId) {
         orderRepo.findById(orderId).ifPresent(order -> {
-            order.getCart().getProductList().forEach(product -> {
-                product.setStockQuantity(product.getStockQuantity() + 1);
+            Cart cart = order.getCart();
+            List<CartItem> cartItems = cart.getCartItemList();
+            for (CartItem cartItem : cartItems) {
+                Product product = cartItem.getProduct();
+                int currentStockQuantity = product.getStockQuantity();
+                // Assuming each cart item represents one quantity of the product
+                product.setStockQuantity(currentStockQuantity + 1); // Increment by 1 for each returned item
                 productRepo.save(product);
-            });
+            }
+
             order.setStatus(OrderStatus.RETURNED);
             orderRepo.save(order);
         });
     }
+
 }

@@ -18,7 +18,8 @@ body {
     margin-top: 1em;
 }
 
-.cart-table th, .cart-table td {
+.cart-table th,
+.cart-table td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: left;
@@ -72,3 +73,44 @@ a {
 a:hover {
     text-decoration: none; /* Remove underline on hover */
 }
+/* Quantity button styles */
+.quantity-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.quantity-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Quantity counter styles */
+.quantity {
+    padding: 0 10px;
+}
+
+/* Adjust column widths */
+.cart-table th:nth-child(1), /* Product Name */
+.cart-table td:nth-child(1) {
+    width: 25%; /* Adjust the width as needed */
+}
+
+.cart-table th:nth-child(2), /* Price */
+.cart-table td:nth-child(2),
+.cart-table th:nth-child(4), /* Total */
+.cart-table td:nth-child(4) {
+    width: 15%; /* Adjust the width as needed */
+}
+
+.cart-table th:nth-child(3), /* Quantity */
+.cart-table td:nth-child(3),
+.cart-table th:nth-child(5) /* Action */
+.cart-table td:nth-child(5) {
+    width: 15%; /* Adjust the width as needed */
+}
+
+

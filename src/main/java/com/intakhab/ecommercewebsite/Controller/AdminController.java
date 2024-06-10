@@ -2,10 +2,7 @@ package com.intakhab.ecommercewebsite.Controller;
 
 import com.intakhab.ecommercewebsite.Config.SecurityConfig;
 import com.intakhab.ecommercewebsite.Enum.OrderStatus;
-import com.intakhab.ecommercewebsite.Model.Category;
-import com.intakhab.ecommercewebsite.Model.Order;
-import com.intakhab.ecommercewebsite.Model.Product;
-import com.intakhab.ecommercewebsite.Model.User;
+import com.intakhab.ecommercewebsite.Model.*;
 import com.intakhab.ecommercewebsite.Service.CategoryService;
 import com.intakhab.ecommercewebsite.Service.OrderService;
 import com.intakhab.ecommercewebsite.Service.ProductService;
@@ -83,6 +80,8 @@ public class AdminController {
         model.put("total_returned_orders", orderService.getTotalReturnedOrders() != null ? orderService.getTotalReturnedOrders().size() : 0);
         model.put("recent_users", userService.findLast5User());
         model.put("user", securityConfig.getCurrentUser());
+
+
 
         return new ModelAndView(adminHomeView, model);
     }
@@ -170,7 +169,7 @@ public class AdminController {
     @GetMapping("/order/products/{orderId}")
     public ModelAndView viewOrderProducts(@PathVariable("orderId") Long orderId) {
         Order order = orderService.getOrderById(orderId);
-        List<Product> products = order.getCart().getProductList();
+        List<CartItem> products = order.getCart().getCartItemList();
         ModelAndView modelAndView = new ModelAndView(customerOrderProductsView);
         modelAndView.addObject("order", order);
         modelAndView.addObject("products", products);

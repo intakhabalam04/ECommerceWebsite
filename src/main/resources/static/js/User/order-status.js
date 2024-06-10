@@ -1,8 +1,8 @@
 const progressBar = document.querySelector('.progress-bar');
 const orderStatus = document.getElementById('order-status');
+const deliveredTick = document.querySelector('.tick.tick-5')
 
 async function updateProgress(orderId) {
-
     switch (orderStatus.textContent) {
         case 'PENDING':
             progressBar.style.width = '20%';
@@ -20,9 +20,14 @@ async function updateProgress(orderId) {
             progressBar.style.width = '100%';
             break;
         case 'CANCELLED':
-            progressBar.style.width='50%'
+            deliveredTick.setAttribute('data-text','Cancelled')
+            progressBar.style.width='100%'
             progressBar.style.backgroundColor='red'
             break
+        case 'RETURNED':
+            deliveredTick.setAttribute('data-text','Returned')
+            progressBar.style.width='100%'
+            progressBar.style.backgroundColor='grey'
         default:
             break;
     }

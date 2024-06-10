@@ -13,11 +13,11 @@
 <div class="cart-container">
     <h2>Shopping Cart</h2>
 
-    <div th:if="${#lists.isEmpty(productLists)}">
+    <div th:if="${#lists.isEmpty(cartItemList)}">
         <p>Your cart is empty.</p>
     </div>
 
-    <div th:if="${not #lists.isEmpty(productLists)}">
+    <div th:if="${not #lists.isEmpty(cartItemList)}">
         <table class="cart-table">
             <thead>
             <tr>
@@ -30,19 +30,23 @@
             </thead>
             <tbody>
             <!-- Iterate over the cart items -->
-            <tr th:each="item : ${productLists}">
-                <td th:text="${item.productName}">Product Name</td>
-                <td th:text="'₹'+${(item.price)-(item.price*item.discount)/100}">0.00</td>
-                <td>1</td>
-                <td th:text="'₹' + (${(item.price)-(item.price*item.discount)/100})">Calculating total</td>
+            <tr th:each="cartItem : ${cartItemList}">
+                <td th:text="${cartItem.product.productName}">Product Name</td>
+                <td th:text="'₹'+${cartItem.product.price}">0.00</td>
                 <td>
-                    <a th:onclick="confirmDelete([[${item.productId}]])"
+                    <button class="quantity-btn" th:onclick="decrementQuantity(this,[[${cartItem.id}]])">-</button>
+                    <span class="quantity" th:text="${cartItem.quantity}">1</span>
+                    <button class="quantity-btn" th:onclick="incrementQuantity(this,[[${cartItem.id}]])">+</button>
+                </td>
+                <td th:text="'₹' + (${cartItem.subTotal})" id="subTotal">Calculating total</td>
+                <td>
+                    <a th:onclick="confirmDelete([[${cartItem.id}]])"
                        class="remove-from-cart-link">Remove</a>
                 </td>
             </tr>
             </tbody>
         </table>
-        <p class="cart-total">Total: <span th:text="${cartprice}">Calculating total</span></p>
+        <p class="cart-total">Total: ₹<span th:text="${cartprice}">Calculating total</span></p>
 
         <!-- Cart Buttons -->
         <div class="cart-buttons">

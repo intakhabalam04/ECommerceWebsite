@@ -1,5 +1,5 @@
 function logout() {
-    alert('Logged out');
+    alert('Logged out')
 }
 
 async function changePassword() {
@@ -28,15 +28,15 @@ async function changePassword() {
             console.error("Error!")
         }
     } catch (e) {
-        console.error(e);
+        console.error(e)
     }
 }
-
 async function uploadProfileImage(input) {
-    const file = input.files[0];
+
+    const file = input.files[0]
     if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
+        const formData = new FormData()
+        formData.append('file', file)
 
         try {
             const uploadResponse = await fetch('/upload-profile-image', {
@@ -77,7 +77,7 @@ function closeProfileImageModal() {
 
 async function removeProfileImage() {
 
-    const  response = await fetch(`/removeProfileImage`)
+    const  response =await fetch(`/removeProfileImage`)
     await response.json()
 
     const profileImage = document.getElementById('profileImage');
@@ -85,11 +85,13 @@ async function removeProfileImage() {
     const imageData = await getImageResponse.arrayBuffer();
     const blob = new Blob([imageData], {
         type: 'image/jpeg'
-    });
+    })
     profileImage.src = URL.createObjectURL(blob);
 
     alert("Profile image removed!");
     closeProfileImageModal();
+
+    
 }
 
 // Function to open the file input when clicking on "Upload DP" button

@@ -29,8 +29,8 @@
                 <a th:href="'/order/track/' + ${order.orderId}" th:text="${order.orderId}">123456789</a>
             </td>
             <td>
-                <span th:each="product,no: ${order.cart.productList}"
-                      th:text="${no.index+1}+') '+${product.productName + '   '}"></span>
+                <span th:each="product,no: ${order.cart.cartItemList}"
+                      th:text="${no.index+1}+') '+${product.product.productName + '   '}"></span>
                 <br/>
             </td>
 
